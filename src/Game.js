@@ -36,17 +36,24 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
 
+    this.pawns = [];
     this.troll = 0;
   }
 
   render() {
+    this.pawns.forEach(pawn => {
+      pawn.dispose();
+    });
+    this.props.pawns.forEach(pawn => {
+      this.addPawn(pawn.x, pawn.y);
+    });
     return (
         <canvas id="renderCanvas"></canvas>
     )
   }
 
   addPawn(x, y) {
-    const pawn = new Mesh.CreateCylinder('pawn_' + x + '_' + y, 0.6, this.widthCaseGame * 0.8, this.widthCaseGame * 0.8, 0, 16, this.scene);
+    const pawn = new Mesh.CreateCylinder(`pawn_${x}_${y}`, 0.6, this.widthCaseGame * 0.8, this.widthCaseGame * 0.8, 0, 16, this.scene);
     pawn.position.x = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * x;
     pawn.position.z = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * y;
     pawn.position.y = 1.1;
@@ -71,16 +78,17 @@ class Game extends React.Component {
     this.troll += 1;
     wood.albedoTexture = new Texture('/textures/pawn.png', this.scene);
     pawn.material = wood;
-    pawn.animations.push(this.animationAppear.clone());
-    this.scene.beginAnimation(pawn, 0, 60, false, 2);
+    // pawn.animations.push(this.animationAppear.clone());
+    // this.scene.beginAnimation(pawn, 0, 60, false, 2);
+    this.pawns.push(pawn);
   }
 
   componentDidMount() {
     const canvas = document.getElementById('renderCanvas');
     this.engine = new Engine(canvas, true);
     this.scene = new Scene(this.engine);
-    this.hdrTexture = new HDRCubeTexture('/textures/room.hdr', this.scene, 512);
-    //this.hdrTexture = new HDRCubeTexture('/textures/room.hdr', this.scene, 64);
+    //this.hdrTexture = new HDRCubeTexture('/textures/room.hdr', this.scene, 512);
+    this.hdrTexture = new HDRCubeTexture('/textures/room.hdr', this.scene, 64);
     this.nbCase = config.nbCase;
     this.widthCaseGame = 2.5;
     this.widthWoodPlank = 57;
@@ -107,7 +115,7 @@ class Game extends React.Component {
     marble.specularIntensity = 0.3;
     marble.cameraExposure = 0.9;
     marble.cameraContrast = 1.6;
-    marble.alpha = 0.9;
+    marble.alpha = 0.95;
     marble.reflectivityTexture = new Texture('/textures/reflectivity.png', this.scene);
     marble.useMicroSurfaceFromReflectivityMapAlpha = true;
     marble.albedoColor = Color3.White();
@@ -120,7 +128,7 @@ class Game extends React.Component {
     caseGame.position.z = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2);
     for (let i = 0; i < this.nbCase; i++) {
       for (let j = 0; j < this.nbCase; j++) {
-        const clone = caseGame.clone('caseGame_' + j + '_' + i);
+        const clone = caseGame.clone(`caseGame_${j}_${i}`);
         clone.position.x = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * j;
         clone.position.z = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * i;
       }
