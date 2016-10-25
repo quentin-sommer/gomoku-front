@@ -19,24 +19,24 @@ class App extends React.Component {
 
   handleClick = () => {
     let i = 0;
-    if (this.state.map.length === 0) {
-      const map = [];
-      while (i < 120) {
-        map.push({
-          x: getRandomIntInclusive(0, config.nbCase - 1),
-          y: getRandomIntInclusive(0, config.nbCase - 1)
-        });
-        i++;
-      }
-
-      this.setState({
-        map
-      })
-    } else {
-      this.setState({
-        map: this.state.map.slice(1)
-      })
+    //if (this.state.map.length === 0) {
+    const map = [];
+    while (i < 120) {
+      map.push({
+        x: getRandomIntInclusive(0, config.nbCase - 1),
+        y: getRandomIntInclusive(0, config.nbCase - 1)
+      });
+      i++;
     }
+
+    this.setState({
+      map
+    })
+    /* } else {
+     this.setState({
+     map: this.state.map.slice(1)
+     })
+     }*/
   };
 
   render() {

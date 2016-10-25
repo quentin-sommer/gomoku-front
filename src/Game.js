@@ -66,7 +66,7 @@ class Game extends React.Component {
     wood.cameraExposure = 0.9;
     wood.cameraContrast = 1.6;
 
-    wood.reflectivityTexture = new Texture('/textures/reflectivity.png', this.scene);
+    wood.reflectivityTexture = this.reflectivityTexture;
     wood.useMicroSurfaceFromReflectivityMapAlpha = false;
     wood.albedoColor = Color3.White();
 
@@ -76,7 +76,7 @@ class Game extends React.Component {
       wood.ambientColor = Color3.Red();
     }
     this.troll += 1;
-    wood.albedoTexture = new Texture('/textures/pawn.png', this.scene);
+    wood.albedoTexture = this.pawnTexture;
     pawn.material = wood;
     // pawn.animations.push(this.animationAppear.clone());
     // this.scene.beginAnimation(pawn, 0, 60, false, 2);
@@ -93,7 +93,8 @@ class Game extends React.Component {
     this.widthCaseGame = 2.5;
     this.widthWoodPlank = 57;
     this.animationAppear = genPawnAppearAnimation();
-
+    this.reflectivityTexture = new Texture('/textures/reflectivity.png', this.scene);
+    this.pawnTexture = new Texture('/textures/pawn.png', this.scene);
     const woodPlank = MeshBuilder.CreateBox('plane', {width: 57, height: 1, depth: 57}, this.scene);
     const wood = new PBRMaterial('wood', this.scene);
     wood.reflectionTexture = this.hdrTexture;
@@ -102,21 +103,21 @@ class Game extends React.Component {
     wood.specularIntensity = 0.3;
     wood.cameraExposure = 0.9;
     wood.cameraContrast = 1.6;
-    wood.reflectivityTexture = new Texture('/textures/reflectivity.png', this.scene);
+    wood.reflectivityTexture = this.reflectivityTexture;
     wood.useMicroSurfaceFromReflectivityMapAlpha = false;
     wood.albedoColor = Color3.White();
     wood.albedoTexture = new Texture('/textures/albedo.png', this.scene);
     woodPlank.material = wood;
 
     const marble = new PBRMaterial('marble', this.scene);
-    marble.reflectivityTexture = this.hdrTexture;
+    //marble.reflectivityTexture = this.hdrTexture;
     marble.directIntensity = 0.5;
     marble.environmentIntensity = 0.5;
     marble.specularIntensity = 0.3;
     marble.cameraExposure = 0.9;
     marble.cameraContrast = 1.6;
     marble.alpha = 0.95;
-    marble.reflectivityTexture = new Texture('/textures/reflectivity.png', this.scene);
+    marble.reflectivityTexture = this.reflectivityTexture;
     marble.useMicroSurfaceFromReflectivityMapAlpha = true;
     marble.albedoColor = Color3.White();
     marble.albedoTexture = new Texture('/textures/marble.jpg', this.scene);
