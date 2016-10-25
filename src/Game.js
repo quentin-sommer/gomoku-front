@@ -13,7 +13,8 @@ import {
     ArcRotateCamera,
     HemisphericLight
 } from 'babylonjs';
-import config from './config'
+import forEach from 'lodash/forEach';
+import config from './config';
 
 const genPawnAppearAnimation = () => {
   const animationAppear = new Animation('appear', 'material.alpha', 50, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
@@ -37,14 +38,17 @@ class Game extends React.Component {
     super(props);
 
     this.pawns = [];
-    this.troll = 0;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    forEach(this.pawns, pawn => {
+      pawn.dispose();
+    });
   }
 
   render() {
-    this.pawns.forEach(pawn => {
-      pawn.dispose();
-    });
-    this.props.pawns.forEach(pawn => {
+    this.pawns = [];
+    forEach(this.props.pawns, pawn => {
       this.addPawn(pawn.x, pawn.y);
     });
     return (
@@ -58,26 +62,7 @@ class Game extends React.Component {
     pawn.position.z = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * y;
     pawn.position.y = 1.1;
 
-    const wood = new PBRMaterial('wood', this.scene);
-    wood.reflectionTexture = this.hdrTexture;
-    wood.directIntensity = 0.5;
-    wood.environmentIntensity = 0.5;
-    wood.specularIntensity = 0.3;
-    wood.cameraExposure = 0.9;
-    wood.cameraContrast = 1.6;
-
-    wood.reflectivityTexture = this.reflectivityTexture;
-    wood.useMicroSurfaceFromReflectivityMapAlpha = false;
-    wood.albedoColor = Color3.White();
-
-    if (this.troll % 2 === 0) {
-      wood.ambientColor = Color3.White();
-    } else {
-      wood.ambientColor = Color3.Red();
-    }
-    this.troll += 1;
-    wood.albedoTexture = this.pawnTexture;
-    pawn.material = wood;
+    pawn.material = this.woodMaterial;
     // pawn.animations.push(this.animationAppear.clone());
     // this.scene.beginAnimation(pawn, 0, 60, false, 2);
     this.pawns.push(pawn);
@@ -95,6 +80,8 @@ class Game extends React.Component {
     this.animationAppear = genPawnAppearAnimation();
     this.reflectivityTexture = new Texture('/textures/reflectivity.png', this.scene);
     this.pawnTexture = new Texture('/textures/pawn.png', this.scene);
+    this.initWoodMaterial();
+
     const woodPlank = MeshBuilder.CreateBox('plane', {width: 57, height: 1, depth: 57}, this.scene);
     const wood = new PBRMaterial('wood', this.scene);
     wood.reflectionTexture = this.hdrTexture;
@@ -162,6 +149,22 @@ class Game extends React.Component {
     window.addEventListener('resize', () => {
       this.engine.resize();
     });
+  }
+
+  initWoodMaterial() {
+    this.woodMaterial = new PBRMaterial('wood', this.scene);
+    this.woodMaterial.reflectionTexture = this.hdrTexture;
+    this.woodMaterial.directIntensity = 0.5;
+    this.woodMaterial.environmentIntensity = 0.5;
+    this.woodMaterial.specularIntensity = 0.3;
+    this.woodMaterial.cameraExposure = 0.9;
+    this.woodMaterial.cameraContrast = 1.6;
+
+    this.woodMaterial.reflectivityTexture = this.reflectivityTexture;
+    this.woodMaterial.useMicroSurfaceFromReflectivityMapAlpha = false;
+    this.woodMaterial.albedoColor = Color3.White();
+    this.woodMaterial.albedoTexture = this.pawnTexture;
+    this.woodMaterial.ambientColor = Color3.White();
   }
 }
 
