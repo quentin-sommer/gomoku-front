@@ -30,7 +30,7 @@ function babylonInit() {
   const canvas = document.getElementById('renderCanvas');
   const engine = new Engine(canvas, true);
   const scene = new Scene(engine);
-  const hdrTexture = new HDRCubeTexture('/textures/room.hdr', scene, 512);
+  const hdrTexture = new HDRCubeTexture('/public/textures/room.hdr', scene, 512);
   const nbCase = 19;
   const widthCaseGame = 2.5;
   const widthWoodPlank = 57;
@@ -58,11 +58,11 @@ function babylonInit() {
   wood.cameraExposure = 0.9;
   wood.cameraContrast = 1.6;
 
-  wood.reflectivityTexture = new Texture('/textures/reflectivity.png', scene);
+  wood.reflectivityTexture = new Texture('/public/textures/reflectivity.png', scene);
   wood.useMicroSurfaceFromReflectivityMapAlpha = false;
 
   wood.albedoColor = Color3.White();
-  wood.albedoTexture = new Texture('/textures/albedo.png', scene);
+  wood.albedoTexture = new Texture('/public/textures/albedo.png', scene);
   woodPlank.material = wood;
 
   const marble = new PBRMaterial('marble', scene);
@@ -73,12 +73,12 @@ function babylonInit() {
   marble.cameraExposure = 0.9;
   marble.cameraContrast = 1.6;
   marble.alpha = 0.8;
-  marble.reflectivityTexture = new Texture('/textures/reflectivity.png', scene);
+  marble.reflectivityTexture = new Texture('/public/textures/reflectivity.png', scene);
 
   marble.useMicroSurfaceFromReflectivityMapAlpha = true;
   marble.albedoColor = Color3.White();
 
-  marble.albedoTexture = new Texture('/textures/marble.jpg', scene);
+  marble.albedoTexture = new Texture('/public/textures/marble.jpg', scene);
 
   const caseGame = MeshBuilder.CreateBox('plane', {width: 2.2, height: 1, depth: 2.2}, scene);
   caseGame.material = marble;
@@ -112,7 +112,7 @@ function babylonInit() {
     wood.cameraExposure = 0.9;
     wood.cameraContrast = 1.6;
 
-    wood.reflectivityTexture = new Texture('/textures/reflectivity.png', scene);
+    wood.reflectivityTexture = new Texture('/public/textures/reflectivity.png', scene);
     wood.useMicroSurfaceFromReflectivityMapAlpha = false;
     wood.albedoColor = Color3.White();
 
@@ -122,7 +122,7 @@ function babylonInit() {
       wood.ambientColor = Color3.Red();
     }
     troll += 1;
-    wood.albedoTexture = new Texture('/textures/pawn.png', scene);
+    wood.albedoTexture = new Texture('/public/textures/pawn.png', scene);
     pawn.material = wood;
     pawn.animations.push(animationAppear.clone());
     scene.beginAnimation(pawn, 0, 60, false, 2);
