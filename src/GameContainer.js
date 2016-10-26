@@ -2,13 +2,6 @@ import React from 'react';
 import Game from './Game';
 import Connection from './lib/Connection';
 import { genInitialMap } from './lib/Map';
-import config from './config';
-
-function getRandomIntInclusive(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 class GameContainer extends React.Component {
   constructor(props) {
@@ -24,19 +17,20 @@ class GameContainer extends React.Component {
 
   /**
    * Callback when player plays a pawn
-   * @param x unsigned int
-   * @param y unsigned int
+   * @param cellIndex unsigned int
    */
-  handleTurn = (x, y) => {
+  handleTurn = (cellIndex) => {
     // TODO: inject real player (0 or 1)
-    this.state.map[x + (config.nbCase * y)] = {
-      player: -1,
+    const newMap = this.state.map.slice(0);
+    newMap[cellIndex] = {
+      player: 1,
       empty: false,
       playable: false
     };
     this.setState({
-      map: this.state.map
+      map: newMap
     });
+
     // TODO: send turn to webserver
   };
 

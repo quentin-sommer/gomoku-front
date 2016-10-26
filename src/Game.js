@@ -15,6 +15,7 @@ import {
 } from 'babylonjs';
 import forEach from 'lodash/forEach';
 import config from './config';
+import { toCoord, toIdx } from './lib/Map';
 
 const genPawnAppearAnimation = () => {
   const animationAppear = new Animation('appear', 'material.alpha', 50, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
@@ -51,8 +52,8 @@ class Game extends React.Component {
     forEach(this.props.map, (cell, index) => {
       if (!cell.empty) {
         // optimizing cpu using bitshift
-        this.addPawn(index % config.nbCase,
-            (index / config.nbCase) >> 0);
+        const coords = toCoord(index);
+        this.addPawnToBoard(coords.x, coords.y);
       }
     });
     return (
@@ -60,7 +61,17 @@ class Game extends React.Component {
     )
   }
 
-  addPawn(x, y) {
+  playPawn(x, y) {
+    const idx = toIdx(x, y);
+    const cell = this.props.map[idx];
+
+    if (cell.empty && cell.playable) {
+      this.addPawnToBoard(x, y);
+      this.props.onPawnPlayed(idx);
+    }
+  }
+
+  addPawnToBoard(x, y) {
     const pawn = new Mesh.CreateCylinder(`pawn_${x}_${y}`, 0.6, this.widthCaseGame * 0.8, this.widthCaseGame * 0.8, 0, 16, this.scene);
     pawn.position.x = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * x;
     pawn.position.z = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * y;
@@ -141,7 +152,7 @@ class Game extends React.Component {
         const string = hitResult.pickedMesh.name.split('_');
         if (string[0] === 'caseGame') {
           console.log('Hit case : ', parseInt(string[1], 10), '/', parseInt(string[2], 10));
-          this.addPawn(parseInt(string[1], 10), parseInt(string[2], 10));
+          this.playPawn(parseInt(string[1], 10), parseInt(string[2], 10));
         }
       }
     };

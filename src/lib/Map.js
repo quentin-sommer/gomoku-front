@@ -15,3 +15,14 @@ export function genInitialMap() {
 
   return map;
 }
+
+export function toIdx(x, y) {
+  return (x + (config.nbCase * y));
+}
+
+export function toCoord(idx) {
+  return {
+    x: idx % config.nbCase,
+    y: (idx / config.nbCase) >> 0
+  }
+}
