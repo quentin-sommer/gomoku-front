@@ -7,6 +7,7 @@ import {
     HDRCubeTexture,
     Animation,
     PBRMaterial,
+    StandardMaterial,
     Mesh,
     Color3,
     Vector3,
@@ -73,11 +74,16 @@ class Game extends React.Component {
 
   addPawnToBoard(x, y) {
     const pawn = new Mesh.CreateCylinder(`pawn_${x}_${y}`, 0.6, this.widthCaseGame * 0.8, this.widthCaseGame * 0.8, 0, 16, this.scene);
-    pawn.position.x = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * x;
-    pawn.position.z = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * y;
+    pawn.position.x = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (x + 0.5);
+    pawn.position.z = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (y + 0.5);
     pawn.position.y = 1.1;
 
-    pawn.material = this.woodMaterial;
+    if (this.testModuloPawn % 2 === 0) {
+      pawn.material = this.blackPawnMaterial;
+    } else {
+      pawn.material = this.whitePawnMaterial;
+    }
+    this.testModuloPawn += 1;
     // pawn.animations.push(this.animationAppear.clone());
     // this.scene.beginAnimation(pawn, 0, 60, false, 2);
     this.visualPawns.push(pawn);
@@ -90,26 +96,23 @@ class Game extends React.Component {
     //this.hdrTexture = new HDRCubeTexture('/textures/room.hdr', this.scene, 512);
     this.hdrTexture = new HDRCubeTexture('/textures/room.hdr', this.scene, 64);
     this.nbCase = config.nbCase;
-    this.widthCaseGame = 2.5;
-    this.widthWoodPlank = 57;
+    this.widthCaseGame = 2.6;
+    this.widthBoardGame = 60;
+    this.widthGrid = 57;
     this.animationAppear = genPawnAppearAnimation();
     this.reflectivityTexture = new Texture('/textures/reflectivity.png', this.scene);
     this.pawnTexture = new Texture('/textures/pawn.png', this.scene);
     this.initWoodMaterial();
+    this.whitePawnTexture = new Texture('/textures/whitePawn.jpg', this.scene);
+    this.blackPawnTexture = new Texture('/textures/blackPawn.jpg', this.scene);
+    this.initPawnMaterial();
 
-    const woodPlank = MeshBuilder.CreateBox('plane', {width: 57, height: 1, depth: 57}, this.scene);
-    const wood = new PBRMaterial('wood', this.scene);
-    wood.reflectionTexture = this.hdrTexture;
-    wood.directIntensity = 0.5;
-    wood.environmentIntensity = 0.5;
-    wood.specularIntensity = 0.3;
-    wood.cameraExposure = 0.9;
-    wood.cameraContrast = 1.6;
-    wood.reflectivityTexture = this.reflectivityTexture;
-    wood.useMicroSurfaceFromReflectivityMapAlpha = false;
-    wood.albedoColor = Color3.White();
-    wood.albedoTexture = new Texture('/textures/albedo.png', this.scene);
-    woodPlank.material = wood;
+    this.testModuloPawn = 0;
+
+    this.hitBox = MeshBuilder.CreateBox('hitbox', {width: this.widthGrid, height: 1, depth: this.widthGrid}, this.scene);
+    this.hitBox.position.y = 1;
+    this.hitBox.material = new StandardMaterial('hitbox', this.scene);
+    this.hitBox.material.alpha = 0;
 
     const marble = new PBRMaterial('marble', this.scene);
     //marble.reflectivityTexture = this.hdrTexture;
@@ -122,18 +125,36 @@ class Game extends React.Component {
     marble.reflectivityTexture = this.reflectivityTexture;
     marble.useMicroSurfaceFromReflectivityMapAlpha = true;
     marble.albedoColor = Color3.White();
-    marble.albedoTexture = new Texture('/textures/marble.jpg', this.scene);
+    marble.albedoTexture = new Texture('/textures/boardGame.jpg', this.scene);
 
-    const caseGame = MeshBuilder.CreateBox('plane', {width: 2.2, height: 1, depth: 2.2}, this.scene);
+    const woodPlank = MeshBuilder.CreateBox('plane', {width: this.widthBoardGame, height: 1, depth: this.widthBoardGame}, this.scene);
+    const wood = new PBRMaterial('wood', this.scene);
+    wood.reflectionTexture = this.hdrTexture;
+    wood.directIntensity = 0.5;
+    wood.environmentIntensity = 0.5;
+    wood.specularIntensity = 0.3;
+    wood.cameraExposure = 0.9;
+    wood.cameraContrast = 1.6;
+    wood.reflectivityTexture = this.reflectivityTexture;
+    wood.useMicroSurfaceFromReflectivityMapAlpha = false;
+    wood.albedoColor = Color3.White();
+    wood.albedoTexture = new Texture('/textures/albedo.png', this.scene);
+    woodPlank.material = marble;
+
+    const marblePlank = MeshBuilder.CreateBox('marblePlank', {width: this.widthGrid - 2.5, height: 1, depth: this.widthGrid - 2.5}, this.scene);
+    marblePlank.material = wood;
+    marblePlank.position.y = 0.25;
+
+    const caseGame = MeshBuilder.CreateBox('plane', {width: this.widthCaseGame, height: 1, depth: this.widthCaseGame}, this.scene);
     caseGame.material = marble;
     caseGame.position.y = 0.3;
     caseGame.position.x = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2);
     caseGame.position.z = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2);
-    for (let i = 0; i < this.nbCase; i++) {
-      for (let j = 0; j < this.nbCase; j++) {
+    for (let i = 0; i < this.nbCase - 1; i++) {
+      for (let j = 0; j < this.nbCase - 1; j++) {
         const clone = caseGame.clone(`caseGame_${j}_${i}`);
-        clone.position.x = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * j;
-        clone.position.z = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2) - (this.widthWoodPlank / this.nbCase) * i;
+        clone.position.x = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (j + 1);
+        clone.position.z = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (i + 1);
       }
     }
     caseGame.dispose();
@@ -149,10 +170,11 @@ class Game extends React.Component {
 
     this.scene.onPointerDown = (evt, hitResult) => {
       if (hitResult.hit && hitResult.pickedMesh) {
-        const string = hitResult.pickedMesh.name.split('_');
-        if (string[0] === 'caseGame') {
-          console.log('Hit case : ', parseInt(string[1], 10), '/', parseInt(string[2], 10));
-          this.playPawn(parseInt(string[1], 10), parseInt(string[2], 10));
+        if (hitResult.pickedMesh.name === 'hitbox') {
+          const x = ((hitResult.pickedPoint.x + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
+          const z = ((hitResult.pickedPoint.z + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
+          console.log('Hit case : ', x, '/', z);
+          this.playPawn(x, z);
         }
       }
     };
@@ -180,6 +202,36 @@ class Game extends React.Component {
     this.woodMaterial.albedoColor = Color3.White();
     this.woodMaterial.albedoTexture = this.pawnTexture;
     this.woodMaterial.ambientColor = Color3.White();
+  }
+
+  initPawnMaterial() {
+    this.whitePawnMaterial = new PBRMaterial('whitePawnMaterial', this.scene);
+    this.whitePawnMaterial.reflectionTexture = this.hdrTexture;
+    this.whitePawnMaterial.directIntensity = 0.5;
+    this.whitePawnMaterial.environmentIntensity = 0.5;
+    this.whitePawnMaterial.specularIntensity = 0.3;
+    this.whitePawnMaterial.cameraExposure = 0.9;
+    this.whitePawnMaterial.cameraContrast = 1.6;
+
+    this.whitePawnMaterial.reflectivityTexture = this.reflectivityTexture;
+    this.whitePawnMaterial.useMicroSurfaceFromReflectivityMapAlpha = false;
+    this.whitePawnMaterial.albedoColor = Color3.White();
+    this.whitePawnMaterial.albedoTexture = this.whitePawnTexture;
+    this.whitePawnMaterial.ambientColor = Color3.White();
+
+    this.blackPawnMaterial = new PBRMaterial('blackPawnMaterial', this.scene);
+    this.blackPawnMaterial.reflectionTexture = this.hdrTexture;
+    this.blackPawnMaterial.directIntensity = 0.5;
+    this.blackPawnMaterial.environmentIntensity = 0.5;
+    this.blackPawnMaterial.specularIntensity = 0.3;
+    this.blackPawnMaterial.cameraExposure = 0.9;
+    this.blackPawnMaterial.cameraContrast = 1.6;
+
+    this.blackPawnMaterial.reflectivityTexture = this.reflectivityTexture;
+    this.blackPawnMaterial.useMicroSurfaceFromReflectivityMapAlpha = false;
+    this.blackPawnMaterial.albedoColor = Color3.White();
+    this.blackPawnMaterial.albedoTexture = this.blackPawnTexture;
+    this.blackPawnMaterial.ambientColor = Color3.White();
   }
 }
 
