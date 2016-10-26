@@ -37,18 +37,18 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
 
-    this.pawns = [];
+    this.visualPawns = [];
   }
 
   componentWillReceiveProps(nextProps) {
-    forEach(this.pawns, pawn => {
+    forEach(this.visualPawns, pawn => {
       pawn.dispose();
     });
+    this.visualPawns = [];
   }
 
   render() {
-    this.pawns = [];
-    forEach(this.props.pawns, pawn => {
+    forEach(this.props.map, pawn => {
       this.addPawn(pawn.x, pawn.y);
     });
     return (
@@ -65,7 +65,7 @@ class Game extends React.Component {
     pawn.material = this.woodMaterial;
     // pawn.animations.push(this.animationAppear.clone());
     // this.scene.beginAnimation(pawn, 0, 60, false, 2);
-    this.pawns.push(pawn);
+    this.visualPawns.push(pawn);
   }
 
   componentDidMount() {
