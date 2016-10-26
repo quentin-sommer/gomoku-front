@@ -1,6 +1,7 @@
 import React from 'react';
 import Game from './Game';
 import Connection from './lib/Connection';
+import { genInitialMap } from './lib/Map';
 import config from './config';
 
 function getRandomIntInclusive(min, max) {
@@ -14,7 +15,7 @@ class GameContainer extends React.Component {
     super(props);
 
     this.state = {
-      map: [],
+      map: genInitialMap(),
       turnOf: -1,
       unauthorizedMoves: []
     };
@@ -22,17 +23,27 @@ class GameContainer extends React.Component {
   }
 
   /**
-   * callback when player plays a pawn
-   * @param position {x, y}
+   * Callback when player plays a pawn
+   * @param x unsigned int
+   * @param y unsigned int
    */
-  handleTurn = (position) => {
-    // send turn to webserver
+  handleTurn = (x, y) => {
+    // TODO: inject real player (0 or 1)
+    this.state.map[x + (config.nbCase * y)] = {
+      player: -1,
+      empty: false,
+      playable: false
+    };
+    this.setState({
+      map: this.state.map
+    });
+    // TODO: send turn to webserver
   };
 
   render() {
     return (
         <div>
-          <button onClick={this.handleClick}>CLICK</button>
+          <button onClick={this.handleClick}>stress test</button>
           <button onClick={() => {
             this.connection.getWs().send('testMsg')
           }}>test wesbsocket
@@ -47,8 +58,9 @@ class GameContainer extends React.Component {
     const map = [];
     while (i < 120) {
       map.push({
-        x: getRandomIntInclusive(0, config.nbCase - 1),
-        y: getRandomIntInclusive(0, config.nbCase - 1)
+        player: 0,
+        empty: false,
+        playable: false
       });
       i++;
     }

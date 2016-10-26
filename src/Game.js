@@ -48,8 +48,12 @@ class Game extends React.Component {
   }
 
   render() {
-    forEach(this.props.map, pawn => {
-      this.addPawn(pawn.x, pawn.y);
+    forEach(this.props.map, (cell, index) => {
+      if (!cell.empty) {
+        // optimizing cpu using bitshift
+        this.addPawn(index % config.nbCase,
+            (index / config.nbCase) >> 0);
+      }
     });
     return (
         <canvas id="renderCanvas"></canvas>
