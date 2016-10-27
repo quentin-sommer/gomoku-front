@@ -30,7 +30,8 @@ class GameContainer extends React.Component {
     this.state = {
       map: genInitialMap(),
       turnOf: -1,
-      player: -1
+      player: -1,
+      gameState: IDLE
     };
   }
 
@@ -71,9 +72,9 @@ class GameContainer extends React.Component {
     const map = [];
     while (i < 120) {
       map.push({
-        player: 0,
-        empty: false,
-        playable: false
+        Player: 0,
+        Empty: false,
+        Playable: false
       });
       i++;
     }

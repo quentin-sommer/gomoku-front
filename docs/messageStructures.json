@@ -1,0 +1,65 @@
+// types
+[
+  // nothing is happening
+  'IDLE',
+  // init game routine, followed by n play turns
+  'START_OF_GAME',
+  // play turn, waiting a user action
+  'PLAY_TURN',
+  // game ended, contain winning player
+  'END_OF_GAME'
+]
+
+/*
+ *Note: we use Uppercase fields because go only export Uppercase fields from structs
+ */
+
+/*
+ * Assumptions:
+ * During a play turn, we use the Playable property on the cells to ensure you can play on it
+ * we rely on the server setting it
+ */
+
+// IDLE
+{
+  Type: 'IDLE'
+}
+
+// START_OF_GAME
+{
+  Type: 'START_OF_GAME',
+  // the number you're going to be (0 or 1)
+  PlayerNumber: int
+}
+
+// PLAY_TURN
+// It's your turn to play
+{
+  Type: 'PLAY_TURN',
+  Map: [
+    {
+      // 0 or 1 or -1 (noone)
+      Player: int,
+      Empty: boolean,
+      // might be not useful, we'll see
+      Playable: boolean
+    }
+  ]
+}
+
+// END_OF_GAME
+// end of game, you either won or lost
+{
+  Type: 'END_OF_GAME',
+  // player who won
+  winner: int,
+  Map: [
+    {
+      // 0 or 1 or -1 (noone)
+      Player: int,
+      Empty: boolean,
+      // might be not useful, we'll see
+      Playable: boolean
+    }
+  ]
+}

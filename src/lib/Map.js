@@ -6,9 +6,9 @@ export function genInitialMap() {
 
   while (i < (config.nbCase * config.nbCase)) {
     map.push({
-      player: -1,
-      empty: true,
-      playable: true
+      Player: -1,
+      Empty: true,
+      Playable: true
     });
     i++;
   }
