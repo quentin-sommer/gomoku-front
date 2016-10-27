@@ -1,18 +1,37 @@
 import React from 'react';
 import Game from './Game';
-import Connection from './lib/Connection';
+import Connection, {
+    IDLE,
+    START_OF_GAME,
+    END_OF_GAME,
+    PLAY_TURN
+} from './lib/Connection';
 import { genInitialMap } from './lib/Map';
 
 class GameContainer extends React.Component {
   constructor(props) {
     super(props);
+    const messageHandlers = [];
+
+    messageHandlers[IDLE] = (action) => {
+      console.log('message: ', action.Type)
+    };
+    messageHandlers[START_OF_GAME] = (action) => {
+      console.log('message: ', action.Type);
+    };
+    messageHandlers[END_OF_GAME] = (action) => {
+      console.log('message: ', action.Type);
+    };
+    messageHandlers[PLAY_TURN] = (action) => {
+      console.log('message: ', action.Type);
+    };
+    this.connection = new Connection(messageHandlers);
 
     this.state = {
       map: genInitialMap(),
       turnOf: -1,
-      unauthorizedMoves: []
+      player: -1
     };
-    this.connection = new Connection();
   }
 
   /**
