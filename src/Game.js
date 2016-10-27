@@ -193,16 +193,16 @@ class Game extends React.Component {
       }
     }, 0x04);
 
-    this.scene.onPointerDown = (evt, hitResult) => {
-      if (hitResult.hit && hitResult.pickedMesh) {
-        if (hitResult.pickedMesh.name === 'hitbox') {
-          const x = ((hitResult.pickedPoint.x + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
-          const z = ((hitResult.pickedPoint.z + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
-          console.log('Hit case : ', x, '/', z);
-          this.playPawn(x, z);
-        }
+    this.scene.onPointerObservable.add((ptrInfo) => {
+      const hitResult = this.scene.pick(ptrInfo.event.offsetX, ptrInfo.event.offsetY, (mesh) => {return (mesh === this.hitBox)});
+      if (hitResult.hit && hitResult.pickedMesh && hitResult.pickedMesh.name === 'hitbox') {
+        const x = ((hitResult.pickedPoint.x + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
+        const z = ((hitResult.pickedPoint.z + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
+        //console.log('Hit case : ', x, '/', z);
+        console.log(ptrInfo);
+        this.playPawn(x, z);
       }
-    };
+    }, 0x01);
 
     this.engine.runRenderLoop(() => {
       this.scene.render();
