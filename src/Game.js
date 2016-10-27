@@ -52,7 +52,7 @@ class Game extends React.Component {
 
   render() {
     forEach(this.props.map, (cell, index) => {
-      if (!cell.empty) {
+      if (!cell.Empty) {
         // optimizing cpu using bitshift
         const coords = toCoord(index);
         this.addPawnToBoard(coords.x, coords.y);
@@ -67,7 +67,7 @@ class Game extends React.Component {
     const idx = toIdx(x, y);
     const cell = this.props.map[idx];
 
-    if (cell.empty && cell.playable) {
+    if (cell.Empty && cell.Playable) {
       this.addPawnToBoard(x, y);
       this.props.onPawnPlayed(idx);
     }
@@ -75,8 +75,8 @@ class Game extends React.Component {
 
   addPawnToBoard(x, y) {
     const pawn = new Mesh.CreateCylinder(`pawn_${x}_${y}`, 0.6, this.widthCaseGame * 0.8, this.widthCaseGame * 0.8, 0, 16, this.scene);
-    pawn.position.x = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (x + 0.5);
-    pawn.position.z = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (y + 0.5);
+    pawn.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (x + 0.5);
+    pawn.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (y + 0.5);
     pawn.position.y = 1.1;
 
     if (this.testModuloPawn % 2 === 0) {
@@ -110,7 +110,11 @@ class Game extends React.Component {
 
     this.testModuloPawn = 0;
 
-    this.hitBox = MeshBuilder.CreateBox('hitbox', {width: this.widthGrid, height: 1, depth: this.widthGrid}, this.scene);
+    this.hitBox = MeshBuilder.CreateBox('hitbox', {
+      width: this.widthGrid,
+      height: 1,
+      depth: this.widthGrid
+    }, this.scene);
     this.hitBox.position.y = 1;
     this.hitBox.material = new StandardMaterial('hitbox', this.scene);
     this.hitBox.material.alpha = 0;
@@ -128,7 +132,11 @@ class Game extends React.Component {
     marble.albedoColor = Color3.White();
     marble.albedoTexture = new Texture('/textures/boardGame.jpg', this.scene);
 
-    const woodPlank = MeshBuilder.CreateBox('plane', {width: this.widthBoardGame, height: 1, depth: this.widthBoardGame}, this.scene);
+    const woodPlank = MeshBuilder.CreateBox('plane', {
+      width: this.widthBoardGame,
+      height: 1,
+      depth: this.widthBoardGame
+    }, this.scene);
     const wood = new PBRMaterial('wood', this.scene);
     wood.reflectionTexture = this.hdrTexture;
     wood.directIntensity = 0.5;
@@ -142,11 +150,19 @@ class Game extends React.Component {
     wood.albedoTexture = new Texture('/textures/albedo.png', this.scene);
     woodPlank.material = marble;
 
-    const marblePlank = MeshBuilder.CreateBox('marblePlank', {width: this.widthGrid - 2.5, height: 1, depth: this.widthGrid - 2.5}, this.scene);
+    const marblePlank = MeshBuilder.CreateBox('marblePlank', {
+      width: this.widthGrid - 2.5,
+      height: 1,
+      depth: this.widthGrid - 2.5
+    }, this.scene);
     marblePlank.material = wood;
     marblePlank.position.y = 0.25;
 
-    const caseGame = MeshBuilder.CreateBox('plane', {width: this.widthCaseGame, height: 1, depth: this.widthCaseGame}, this.scene);
+    const caseGame = MeshBuilder.CreateBox('plane', {
+      width: this.widthCaseGame,
+      height: 1,
+      depth: this.widthCaseGame
+    }, this.scene);
     caseGame.material = marble;
     caseGame.position.y = 0.3;
     caseGame.position.x = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2);
@@ -154,15 +170,15 @@ class Game extends React.Component {
     for (let i = 0; i < this.nbCase - 1; i++) {
       for (let j = 0; j < this.nbCase - 1; j++) {
         const clone = caseGame.clone(`caseGame_${j}_${i}`);
-        clone.position.x = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (j + 1);
-        clone.position.z = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (i + 1);
+        clone.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (j + 1);
+        clone.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (i + 1);
       }
     }
     caseGame.dispose();
 
     this.ghostPawn = Mesh.CreateSphere('ghost', 32, 1, this.scene);
-    this.ghostPawn.position.x = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
-    this.ghostPawn.position.z = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
+    this.ghostPawn.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
+    this.ghostPawn.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
     this.ghostPawn.position.y = 1.5;
     this.ghostPawn.material = new StandardMaterial('ghost', this.scene);
     this.ghostPawn.material.alpha = 0.6;
@@ -183,12 +199,14 @@ class Game extends React.Component {
 
     this.scene.onPointerObservable.add((ptrInfo) => {
       //console.log(ptrInfo.event);
-      const hitResult = this.scene.pick(ptrInfo.event.offsetX, ptrInfo.event.offsetY, (mesh) => {return (mesh === this.hitBox)});
+      const hitResult = this.scene.pick(ptrInfo.event.offsetX, ptrInfo.event.offsetY, (mesh) => {
+        return (mesh === this.hitBox)
+      });
       if (hitResult.hit && hitResult.pickedMesh && hitResult.pickedMesh.name === 'hitbox') {
         const x = ((hitResult.pickedPoint.x + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
         const z = ((hitResult.pickedPoint.z + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
-        this.ghostPawn.position.x = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (x + 0.5);
-        this.ghostPawn.position.z = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (z + 0.5);
+        this.ghostPawn.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (x + 0.5);
+        this.ghostPawn.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (z + 0.5);
         //console.log(hitResult);
       }
     }, 0x04);
