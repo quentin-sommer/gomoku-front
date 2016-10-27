@@ -11,10 +11,15 @@ import {
     StandardMaterial,
     Mesh,
     Color3,
+    Color4,
     Vector3,
     ArcRotateCamera,
     HemisphericLight,
     Observable,
+    WorldSpaceCanvas2D,
+    Text2D,
+    Size,
+    Quaternion
 } from 'babylonjs';
 import forEach from 'lodash/forEach';
 import config from './config';
@@ -75,10 +80,10 @@ class Game extends React.Component {
   }
 
   addPawnToBoard(x, y) {
-    const pawn = new Mesh.CreateCylinder(`pawn_${x}_${y}`, 0.6, this.widthCaseGame * 0.8, this.widthCaseGame * 0.8, 0, 16, this.scene);
+    const pawn = new Mesh.CreateCylinder(`pawn_${x}_${y}`, 1.2, this.widthCaseGame * 0.8, this.widthCaseGame * 0.8, 0, 16, this.scene);
     pawn.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (x + 0.5);
     pawn.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (y + 0.5);
-    pawn.position.y = 1.1;
+    pawn.position.y = 1.5;
 
     if (this.testModuloPawn % 2 === 0) {
       pawn.material = this.blackPawnMaterial;
@@ -97,9 +102,9 @@ class Game extends React.Component {
     this.scene = new Scene(this.engine);
     this.hdrTexture = new HDRCubeTexture('/textures/room.hdr', this.scene, 64);
     this.nbCase = config.nbCase;
-    this.widthCaseGame = 2.6;
-    this.widthBoardGame = 60;
-    this.widthGrid = 57;
+    this.widthCaseGame = 2.6 * 3;
+    this.widthBoardGame = 60 * 3;
+    this.widthGrid = 57 * 3;
     this.animationAppear = genPawnAppearAnimation();
     this.reflectivityTexture = new Texture('/textures/reflectivity.png', this.scene);
     this.pawnTexture = new Texture('/textures/pawn.png', this.scene);
@@ -132,7 +137,7 @@ class Game extends React.Component {
     hdrSkybox.material = hdrSkyboxMaterial;
     hdrSkybox.infiniteDistance = true;*/
 
-    var skybox = Mesh.CreateBox("skyBox", 500.0, this.scene);
+    var skybox = Mesh.CreateBox("skyBox", 1000.0, this.scene);
     var skyboxMaterial = new StandardMaterial("skyBox", this.scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new CubeTexture("textures/stormydays", this.scene);
@@ -174,9 +179,9 @@ class Game extends React.Component {
     woodPlank.material = marble;
 
     const marblePlank = MeshBuilder.CreateBox('marblePlank', {
-      width: this.widthGrid - 2.5,
+      width: this.widthGrid - 6.5,
       height: 1,
-      depth: this.widthGrid - 2.5
+      depth: this.widthGrid - 6.5
     }, this.scene);
     marblePlank.material = wood;
     marblePlank.position.y = 0.25;
@@ -187,7 +192,7 @@ class Game extends React.Component {
       depth: this.widthCaseGame
     }, this.scene);
     caseGame.material = marble;
-    caseGame.position.y = 0.3;
+    caseGame.position.y = 0.4;
     caseGame.position.x = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2);
     caseGame.position.z = (this.widthWoodPlank / 2) - (this.widthWoodPlank / this.nbCase / 2);
     for (let i = 0; i < this.nbCase - 1; i++) {
@@ -199,7 +204,17 @@ class Game extends React.Component {
     }
     caseGame.dispose();
 
-    this.ghostPawn = Mesh.CreateSphere('ghost', 32, 1, this.scene);
+    /*const canvasBoardGame = new WorldSpaceCanvas2D(this.scene, new Size(this.widthBoardGame, this.widthBoardGame), {
+      id: "canvasBoardGame",
+      worldPosition: new Vector3(0, 2, 0),
+      worldRotation: Quaternion.RotationYawPitchRoll(0, Math.PI / 2, 0),
+      enableInteraction: true,
+
+    });
+    const newText = new Text2D("A", { parent: canvasBoardGame, fontName: "7pt Arial", x: 0, y: 0, fontSuperSample: true });
+    newText.defaultFontColor = new Color4(0, 0, 0, 1);*/
+
+    this.ghostPawn = Mesh.CreateSphere('ghost', 32, 2, this.scene);
     this.ghostPawn.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
     this.ghostPawn.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
     this.ghostPawn.position.y = 1.5;
@@ -207,11 +222,11 @@ class Game extends React.Component {
     this.ghostPawn.material.alpha = 0.6;
     this.ghostPawn.material.ambientColor = Color3.Red();
 
-    const camera = new ArcRotateCamera('Camera', -Math.PI / 4, Math.PI / 2.5, 150, Vector3.Zero(), this.scene);
+    const camera = new ArcRotateCamera('Camera', -Math.PI / 4, Math.PI / 2.5, 250, Vector3.Zero(), this.scene);
     camera.attachControl(canvas, true);
     camera.minZ = 0.1;
     camera.lowerRadiusLimit = 8;
-    camera.upperRadiusLimit = 200;
+    camera.upperRadiusLimit = 400;
     camera.upperBetaLimit = Math.PI / 2.3;
 
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
@@ -241,8 +256,8 @@ class Game extends React.Component {
       if (hitResult.hit && hitResult.pickedMesh && hitResult.pickedMesh.name === 'hitbox') {
         const x = ((hitResult.pickedPoint.x + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
         const z = ((hitResult.pickedPoint.z + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
-        //console.log('Hit case : ', x, '/', z);
-        console.log(ptrInfo);
+        console.log('Hit case : ', x, '/', z);
+        //console.log(ptrInfo);
         this.playPawn(x, z);
       }
     }, 0x01);
