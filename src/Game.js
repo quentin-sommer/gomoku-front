@@ -12,7 +12,8 @@ import {
     Color3,
     Vector3,
     ArcRotateCamera,
-    HemisphericLight
+    HemisphericLight,
+    Observable
 } from 'babylonjs';
 import forEach from 'lodash/forEach';
 import config from './config';
@@ -159,6 +160,14 @@ class Game extends React.Component {
     }
     caseGame.dispose();
 
+    this.ghostPawn = Mesh.CreateSphere('ghost', 32, 1, this.scene);
+    this.ghostPawn.position.x = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
+    this.ghostPawn.position.z = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
+    this.ghostPawn.position.y = 1.5;
+    this.ghostPawn.material = new StandardMaterial('ghost', this.scene);
+    this.ghostPawn.material.alpha = 0.6;
+    this.ghostPawn.material.ambientColor = Color3.Red();
+
     const camera = new ArcRotateCamera('Camera', -Math.PI / 4, Math.PI / 2.5, 200, Vector3.Zero(), this.scene);
     camera.attachControl(canvas, true);
     camera.minZ = 0.1;
@@ -167,6 +176,22 @@ class Game extends React.Component {
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
     const light = new HemisphericLight('light1', new Vector3(0, 1, 0), this.scene);
     light.intensity = 0.7;
+
+    if (!this.scene.onPointerObservable) {
+      this.scene.onPointerObservable = new Observable();
+    }
+
+    this.scene.onPointerObservable.add((ptrInfo) => {
+      //console.log(ptrInfo.event);
+      const hitResult = this.scene.pick(ptrInfo.event.offsetX, ptrInfo.event.offsetY, (mesh) => {return (mesh === this.hitBox)});
+      if (hitResult.hit && hitResult.pickedMesh && hitResult.pickedMesh.name === 'hitbox') {
+        const x = ((hitResult.pickedPoint.x + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
+        const z = ((hitResult.pickedPoint.z + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
+        this.ghostPawn.position.x = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (x + 0.5);
+        this.ghostPawn.position.z = - (this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (z + 0.5);
+        //console.log(hitResult);
+      }
+    }, 0x04);
 
     this.scene.onPointerDown = (evt, hitResult) => {
       if (hitResult.hit && hitResult.pickedMesh) {
