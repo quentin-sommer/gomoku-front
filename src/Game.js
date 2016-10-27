@@ -212,6 +212,7 @@ class Game extends React.Component {
     camera.minZ = 0.1;
     camera.lowerRadiusLimit = 8;
     camera.upperRadiusLimit = 200;
+    camera.upperBetaLimit = Math.PI / 2.3;
 
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
     const light = new HemisphericLight('light1', new Vector3(0, 1, 0), this.scene);
