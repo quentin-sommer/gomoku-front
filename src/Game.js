@@ -5,6 +5,7 @@ import {
     Texture,
     MeshBuilder,
     HDRCubeTexture,
+    CubeTexture,
     Animation,
     PBRMaterial,
     StandardMaterial,
@@ -13,7 +14,7 @@ import {
     Vector3,
     ArcRotateCamera,
     HemisphericLight,
-    Observable
+    Observable,
 } from 'babylonjs';
 import forEach from 'lodash/forEach';
 import config from './config';
@@ -94,7 +95,6 @@ class Game extends React.Component {
     const canvas = document.getElementById('renderCanvas');
     this.engine = new Engine(canvas, true);
     this.scene = new Scene(this.engine);
-    //this.hdrTexture = new HDRCubeTexture('/textures/room.hdr', this.scene, 512);
     this.hdrTexture = new HDRCubeTexture('/textures/room.hdr', this.scene, 64);
     this.nbCase = config.nbCase;
     this.widthCaseGame = 2.6;
@@ -118,6 +118,29 @@ class Game extends React.Component {
     this.hitBox.position.y = 1;
     this.hitBox.material = new StandardMaterial('hitbox', this.scene);
     this.hitBox.material.alpha = 0;
+
+    /*this.hdrTexture2 = new HDRCubeTexture('/textures/room.hdr', this.scene, 512);
+    const hdrSkybox = Mesh.CreateSphere("hdrSkyBox", 32, 1000.0, this.scene);
+    const hdrSkyboxMaterial = new PBRMaterial("skyBox", this.scene);
+    hdrSkyboxMaterial.backFaceCulling = false;
+    hdrSkyboxMaterial.reflectionTexture = this.hdrTexture2;
+    hdrSkyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+	  hdrSkyboxMaterial.microSurface = 1.0;
+	  hdrSkyboxMaterial.cameraExposure = 0.6;
+	  hdrSkyboxMaterial.cameraContrast = 1.6;
+    hdrSkyboxMaterial.disableLighting = true;
+    hdrSkybox.material = hdrSkyboxMaterial;
+    hdrSkybox.infiniteDistance = true;*/
+
+    var skybox = Mesh.CreateBox("skyBox", 500.0, this.scene);
+    var skyboxMaterial = new StandardMaterial("skyBox", this.scene);
+    skyboxMaterial.backFaceCulling = false;
+    skyboxMaterial.reflectionTexture = new CubeTexture("textures/stormydays", this.scene);
+    skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new Color3(0, 0, 0);
+    skyboxMaterial.disableLighting = true;
+    skybox.material = skyboxMaterial;
 
     const marble = new PBRMaterial('marble', this.scene);
     //marble.reflectivityTexture = this.hdrTexture;
@@ -184,10 +207,11 @@ class Game extends React.Component {
     this.ghostPawn.material.alpha = 0.6;
     this.ghostPawn.material.ambientColor = Color3.Red();
 
-    const camera = new ArcRotateCamera('Camera', -Math.PI / 4, Math.PI / 2.5, 200, Vector3.Zero(), this.scene);
+    const camera = new ArcRotateCamera('Camera', -Math.PI / 4, Math.PI / 2.5, 150, Vector3.Zero(), this.scene);
     camera.attachControl(canvas, true);
     camera.minZ = 0.1;
     camera.lowerRadiusLimit = 8;
+    camera.upperRadiusLimit = 200;
 
     // This creates a light, aiming 0,1,0 - to the sky (non-mesh)
     const light = new HemisphericLight('light1', new Vector3(0, 1, 0), this.scene);
