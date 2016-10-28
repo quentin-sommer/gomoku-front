@@ -23,7 +23,7 @@ import {
 } from 'babylonjs';
 import forEach from 'lodash/forEach';
 import config from './config';
-import { toCoord, toIdx } from './lib/Map';
+import {toCoord, toIdx} from './lib/Map';
 
 const genPawnAppearAnimation = () => {
   const animationAppear = new Animation('appear', 'material.alpha', 50, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
@@ -61,7 +61,7 @@ class Game extends React.Component {
       if (!cell.Empty) {
         // optimizing cpu using bitshift
         const coords = toCoord(index);
-        this.addPawnToBoard(coords.x, coords.y);
+        this.addPawnToBoard(coords.x, coords.y, cell.player);
       }
     });
     return (
@@ -74,23 +74,24 @@ class Game extends React.Component {
     const cell = this.props.map[idx];
 
     if (cell.Empty && cell.Playable) {
-      this.addPawnToBoard(x, y);
+      this.addPawnToBoard(x, y, this.props.player);
       this.props.onPawnPlayed(idx);
     }
   }
 
-  addPawnToBoard(x, y) {
+  addPawnToBoard(x, y, player) {
     const pawn = new Mesh.CreateCylinder(`pawn_${x}_${y}`, 1.2, this.widthCaseGame * 0.8, this.widthCaseGame * 0.8, 0, 16, this.scene);
     pawn.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (x + 0.5);
     pawn.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (y + 0.5);
     pawn.position.y = 1.5;
 
-    if (this.testModuloPawn % 2 === 0) {
+    if (player === 0) {
+      pawn.material = this.whitePawnMaterial;
+    } else if (player === 1) {
       pawn.material = this.blackPawnMaterial;
     } else {
-      pawn.material = this.whitePawnMaterial;
+      console.log('invalid player number')
     }
-    this.testModuloPawn += 1;
     // pawn.animations.push(this.animationAppear.clone());
     // this.scene.beginAnimation(pawn, 0, 60, false, 2);
     this.visualPawns.push(pawn);
@@ -113,8 +114,6 @@ class Game extends React.Component {
     this.blackPawnTexture = new Texture('/textures/blackPawn.jpg', this.scene);
     this.initPawnMaterial();
 
-    this.testModuloPawn = 0;
-
     this.hitBox = MeshBuilder.CreateBox('hitbox', {
       width: this.widthGrid,
       height: 1,
@@ -125,17 +124,17 @@ class Game extends React.Component {
     this.hitBox.material.alpha = 0;
 
     /*this.hdrTexture2 = new HDRCubeTexture('/textures/room.hdr', this.scene, 512);
-    const hdrSkybox = Mesh.CreateSphere("hdrSkyBox", 32, 1000.0, this.scene);
-    const hdrSkyboxMaterial = new PBRMaterial("skyBox", this.scene);
-    hdrSkyboxMaterial.backFaceCulling = false;
-    hdrSkyboxMaterial.reflectionTexture = this.hdrTexture2;
-    hdrSkyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-	  hdrSkyboxMaterial.microSurface = 1.0;
-	  hdrSkyboxMaterial.cameraExposure = 0.6;
-	  hdrSkyboxMaterial.cameraContrast = 1.6;
-    hdrSkyboxMaterial.disableLighting = true;
-    hdrSkybox.material = hdrSkyboxMaterial;
-    hdrSkybox.infiniteDistance = true;*/
+     const hdrSkybox = Mesh.CreateSphere("hdrSkyBox", 32, 1000.0, this.scene);
+     const hdrSkyboxMaterial = new PBRMaterial("skyBox", this.scene);
+     hdrSkyboxMaterial.backFaceCulling = false;
+     hdrSkyboxMaterial.reflectionTexture = this.hdrTexture2;
+     hdrSkyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+     hdrSkyboxMaterial.microSurface = 1.0;
+     hdrSkyboxMaterial.cameraExposure = 0.6;
+     hdrSkyboxMaterial.cameraContrast = 1.6;
+     hdrSkyboxMaterial.disableLighting = true;
+     hdrSkybox.material = hdrSkyboxMaterial;
+     hdrSkybox.infiniteDistance = true;*/
 
     var skybox = Mesh.CreateBox("skyBox", 1000.0, this.scene);
     var skyboxMaterial = new StandardMaterial("skyBox", this.scene);
@@ -205,14 +204,14 @@ class Game extends React.Component {
     caseGame.dispose();
 
     /*const canvasBoardGame = new WorldSpaceCanvas2D(this.scene, new Size(this.widthBoardGame, this.widthBoardGame), {
-      id: "canvasBoardGame",
-      worldPosition: new Vector3(0, 2, 0),
-      worldRotation: Quaternion.RotationYawPitchRoll(0, Math.PI / 2, 0),
-      enableInteraction: true,
+     id: "canvasBoardGame",
+     worldPosition: new Vector3(0, 2, 0),
+     worldRotation: Quaternion.RotationYawPitchRoll(0, Math.PI / 2, 0),
+     enableInteraction: true,
 
-    });
-    const newText = new Text2D("A", { parent: canvasBoardGame, fontName: "7pt Arial", x: 0, y: 0, fontSuperSample: true });
-    newText.defaultFontColor = new Color4(0, 0, 0, 1);*/
+     });
+     const newText = new Text2D("A", { parent: canvasBoardGame, fontName: "7pt Arial", x: 0, y: 0, fontSuperSample: true });
+     newText.defaultFontColor = new Color4(0, 0, 0, 1);*/
 
     this.ghostPawn = Mesh.CreateSphere('ghost', 32, 2, this.scene);
     this.ghostPawn.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
@@ -252,7 +251,9 @@ class Game extends React.Component {
     }, 0x04);
 
     this.scene.onPointerObservable.add((ptrInfo) => {
-      const hitResult = this.scene.pick(ptrInfo.event.offsetX, ptrInfo.event.offsetY, (mesh) => {return (mesh === this.hitBox)});
+      const hitResult = this.scene.pick(ptrInfo.event.offsetX, ptrInfo.event.offsetY, (mesh) => {
+        return (mesh === this.hitBox)
+      });
       if (hitResult.hit && hitResult.pickedMesh && hitResult.pickedMesh.name === 'hitbox') {
         const x = ((hitResult.pickedPoint.x + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
         const z = ((hitResult.pickedPoint.z + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
