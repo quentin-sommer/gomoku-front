@@ -7,6 +7,8 @@ export const PLAY_TURN = 'PLAY_TURN';
 // game ended, contain winning player
 export const END_OF_GAME = 'END_OF_GAME';
 
+export const ENTER_ROOM = 'ENTER_ROOM';
+
 class Connection {
   constructor(messageHandlers) {
     this.messageHandlers = messageHandlers;

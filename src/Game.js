@@ -73,7 +73,7 @@ class Game extends React.Component {
     const idx = toIdx(x, y);
     const cell = this.props.map[idx];
 
-    if (cell.Empty && cell.Playable && this.props.turnOf === this.props.player) {
+    if (cell.Empty && cell.Playable && this.props.turnOf === this.props.player && this.props.turnOf !== -1) {
       this.addPawnToBoard(x, y, this.props.player);
       this.props.onPawnPlayed(idx);
     }

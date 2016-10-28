@@ -4,7 +4,8 @@ import Connection, {
     IDLE,
     START_OF_GAME,
     END_OF_GAME,
-    PLAY_TURN
+    PLAY_TURN,
+    ENTER_ROOM
 } from './lib/Connection';
 import {genInitialMap} from './lib/Map';
 
@@ -38,6 +39,12 @@ class GameContainer extends React.Component {
       }
     };
     this.connection = new Connection(messageHandlers);
+    setTimeout(() => {
+    this.connection.getWs().send(JSON.stringify({
+      Type: ENTER_ROOM,
+      Room: 42
+    }));
+  }, 500);
 
     this.state = {
       map: genInitialMap(),
