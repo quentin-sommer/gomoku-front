@@ -73,7 +73,7 @@ class Game extends React.Component {
     const idx = toIdx(x, y);
     const cell = this.props.map[idx];
 
-    if (cell.Empty && cell.Playable) {
+    if (cell.Empty && cell.Playable && this.props.turnOf === this.props.player) {
       this.addPawnToBoard(x, y, this.props.player);
       this.props.onPawnPlayed(idx);
     }
@@ -85,6 +85,7 @@ class Game extends React.Component {
     pawn.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (y + 0.5);
     pawn.position.y = 1.5;
 
+    console.log(player);
     if (player === 0) {
       pawn.material = this.whitePawnMaterial;
     } else if (player === 1) {
