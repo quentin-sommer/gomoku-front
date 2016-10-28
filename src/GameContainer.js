@@ -20,7 +20,7 @@ class GameContainer extends React.Component {
     };
     messageHandlers[START_OF_GAME] = (action) => {
       this.setState({
-        player: action.PlayerNumber
+        Player: action.PlayerNumber
       })
     };
     messageHandlers[END_OF_GAME] = (action) => {
@@ -28,37 +28,29 @@ class GameContainer extends React.Component {
     };
     messageHandlers[PLAY_TURN] = (action) => {
       console.log('message: ', action.Type);
-      if (action.Map) {
-        this.setState({
-          map: action.Map,
-          turnOf: this.state.player
-        })
-      } else {
-        this.setState({
-          turnOf: this.state.player
-        })
-      }
+      this.setState({
+        TurnOf: this.state.Player
+      })
     };
     messageHandlers[REFRESH] = (action) => {
       console.log('message: ', action.Type);
-      if (action.Map) {
-        this.setState({
-          map: action.Map
-        })
-      }
+      this.setState({
+        Map: action.Map
+      })
     };
-    this.connection = new Connection(messageHandlers);
-    setTimeout(() => {
-    this.connection.getWs().send(JSON.stringify({
-      Type: ENTER_ROOM,
-      Room: 42
-    }));
-  }, 500);
+    const wsConnectedCb = () => {
+      this.connection.getWs().send(JSON.stringify({
+        Type: ENTER_ROOM,
+        Room: 42
+      }));
+    };
+
+    this.connection = new Connection(messageHandlers, wsConnectedCb);
 
     this.state = {
-      map: genInitialMap(),
-      turnOf: -1,
-      player: -1,
+      Map: genInitialMap(),
+      TurnOf: -1,
+      Player: -1,
       gameState: IDLE
     };
   }
@@ -69,15 +61,15 @@ class GameContainer extends React.Component {
    */
   handleTurn = (cellIndex) => {
     // TODO: inject real player (0 or 1)
-    const newMap = this.state.map.slice(0);
+    const newMap = this.state.Map.slice(0);
     newMap[cellIndex] = {
-      player: this.state.player,
-      empty: false,
-      playable: false
+      Player: this.state.Player,
+      Empty: false,
+      Playable: false
     };
     this.setState({
-      map: newMap,
-      turnOf: (this.state.player === 0) ? 1 : 0
+      Map: newMap,
+      TurnOf: (this.state.Player === 0) ? 1 : 0
     });
     this.connection.getWs().send(JSON.stringify({
       Type: PLAY_TURN,
@@ -95,11 +87,11 @@ class GameContainer extends React.Component {
             this.connection.getWs().send('testMsg')
           }}>test wesbsocket
           </button>
-          {this.state.player !== -1
-              ? <p>You are player {this.state.player}</p>
+          {this.state.Player !== -1
+              ? <p>You are player {this.state.Player}</p>
               : <p>Game has not started yet</p>
           }
-          {this.state.turnOf === this.state.player
+          {this.state.TurnOf !== -1 && this.state.TurnOf === this.state.Player
               ? <p>Your turn</p>
               : <p>Not your turn</p>
           }
@@ -121,7 +113,7 @@ class GameContainer extends React.Component {
     }
 
     this.setState({
-      map
+      Map: map
     });
   };
 

@@ -11,15 +11,10 @@ import {
     StandardMaterial,
     Mesh,
     Color3,
-    Color4,
     Vector3,
     ArcRotateCamera,
     HemisphericLight,
     Observable,
-    WorldSpaceCanvas2D,
-    Text2D,
-    Size,
-    Quaternion
 } from 'babylonjs';
 import forEach from 'lodash/forEach';
 import config from './config';
@@ -57,11 +52,11 @@ class Game extends React.Component {
   }
 
   render() {
-    forEach(this.props.map, (cell, index) => {
+    forEach(this.props.Map, (cell, index) => {
       if (!cell.Empty) {
         // optimizing cpu using bitshift
         const coords = toCoord(index);
-        this.addPawnToBoard(coords.x, coords.y, cell.player);
+        this.addPawnToBoard(coords.x, coords.y, cell.Player);
       }
     });
     return (
@@ -71,10 +66,10 @@ class Game extends React.Component {
 
   playPawn(x, y) {
     const idx = toIdx(x, y);
-    const cell = this.props.map[idx];
+    const cell = this.props.Map[idx];
 
-    if (cell.Empty && cell.Playable && this.props.turnOf === this.props.player && this.props.turnOf !== -1) {
-      this.addPawnToBoard(x, y, this.props.player);
+    if (cell.Empty && cell.Playable && this.props.TurnOf === this.props.Player && this.props.TurnOf !== -1) {
+      this.addPawnToBoard(x, y, this.props.Player);
       this.props.onPawnPlayed(idx);
     }
   }
@@ -85,13 +80,12 @@ class Game extends React.Component {
     pawn.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (y + 0.5);
     pawn.position.y = 1.5;
 
-    console.log(player);
     if (player === 0) {
       pawn.material = this.whitePawnMaterial;
     } else if (player === 1) {
       pawn.material = this.blackPawnMaterial;
     } else {
-      console.log('invalid player number')
+      console.log(`invalid player number '${player}'while putting pawn to ${x},${y}`);
     }
     // pawn.animations.push(this.animationAppear.clone());
     // this.scene.beginAnimation(pawn, 0, 60, false, 2);

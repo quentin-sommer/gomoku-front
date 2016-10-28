@@ -12,12 +12,13 @@ export const ENTER_ROOM = 'ENTER_ROOM';
 export const REFRESH = 'REFRESH';
 
 class Connection {
-  constructor(messageHandlers) {
+  constructor(messageHandlers, cb) {
     this.messageHandlers = messageHandlers;
     this.ws = new WebSocket("ws://localhost:8080/ws");
 
     this.ws.onopen = function (evt) {
       console.log("WS OPEN");
+      cb();
     };
 
     this.ws.onclose = function (evt) {
