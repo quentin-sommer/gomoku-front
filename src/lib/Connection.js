@@ -10,30 +10,29 @@ export const END_OF_GAME = 'END_OF_GAME';
 class Connection {
   constructor(messageHandlers) {
     this.messageHandlers = messageHandlers;
-    this.ws = new WebSocket("ws://localhost:8080/echo");
+    this.ws = new WebSocket("ws://localhost:8080/ws");
 
     this.ws.onopen = function (evt) {
-      console.log("OPEN");
+      console.log("WS OPEN");
     };
 
     this.ws.onclose = function (evt) {
-      console.log("CLOSE");
+      console.log("WS CLOSE");
       this.ws = null;
     };
 
     this.ws.onmessage = (evt) => {
-      console.log("RESPONSE: " + evt.data);
       try {
         const action = JSON.parse(evt.data);
         this.handleMessage(action);
       }
       catch (e) {
-        console.log('JSON parsing of message failed', e);
+        console.log('WS JSON parsing of message failed', e);
       }
     };
 
     this.ws.onerror = function (evt) {
-      console.log("ERROR: " + evt.data);
+      console.log("WS ERROR: " + evt.data);
     }
   }
 
