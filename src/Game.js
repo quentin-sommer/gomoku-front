@@ -68,7 +68,7 @@ class Game extends React.Component {
     const idx = toIdx(x, y);
     const cell = this.props.Map[idx];
 
-    if (cell.Empty && cell.Playable && this.props.TurnOf === this.props.Player && this.props.TurnOf !== -1) {
+    if (this.props.TurnOf !== -1 && cell.Empty && cell.Playable && this.props.TurnOf === this.props.Player) {
       this.addPawnToBoard(x, y, this.props.Player);
       this.props.onPawnPlayed(idx);
     }
@@ -252,8 +252,8 @@ class Game extends React.Component {
       if (hitResult.hit && hitResult.pickedMesh && hitResult.pickedMesh.name === 'hitbox') {
         const x = ((hitResult.pickedPoint.x + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
         const z = ((hitResult.pickedPoint.z + this.widthGrid / 2) / (this.widthGrid / this.nbCase)) | 0;
-        console.log('Hit case : ', x, '/', z);
-        //console.log(ptrInfo);
+        // console.log('Hit case : ', x, '/', z);
+        // console.log(ptrInfo);
         this.playPawn(x, z);
       }
     }, 0x01);
