@@ -5,7 +5,8 @@ import Connection, {
     START_OF_GAME,
     END_OF_GAME,
     PLAY_TURN,
-    ENTER_ROOM
+    ENTER_ROOM,
+    REFRESH
 } from './lib/Connection';
 import {genInitialMap} from './lib/Map';
 
@@ -35,6 +36,14 @@ class GameContainer extends React.Component {
       } else {
         this.setState({
           turnOf: this.state.player
+        })
+      }
+    };
+    messageHandlers[REFRESH] = (action) => {
+      console.log('message: ', action.Type);
+      if (action.Map) {
+        this.setState({
+          map: action.Map
         })
       }
     };

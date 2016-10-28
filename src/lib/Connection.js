@@ -9,6 +9,8 @@ export const END_OF_GAME = 'END_OF_GAME';
 
 export const ENTER_ROOM = 'ENTER_ROOM';
 
+export const REFRESH = 'REFRESH';
+
 class Connection {
   constructor(messageHandlers) {
     this.messageHandlers = messageHandlers;
@@ -49,6 +51,8 @@ class Connection {
         return this.messageHandlers[PLAY_TURN](action);
       case END_OF_GAME:
         return this.messageHandlers[END_OF_GAME](action);
+      case REFRESH:
+        return this.messageHandlers[REFRESH](action);
       default:
         console.log('invalid action type', type);
         return null;
