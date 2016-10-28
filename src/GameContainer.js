@@ -60,7 +60,6 @@ class GameContainer extends React.Component {
    * @param cellIndex unsigned int
    */
   handleTurn = (cellIndex) => {
-    // TODO: inject real player (0 or 1)
     const newMap = this.state.Map.slice(0);
     newMap[cellIndex] = {
       Player: this.state.Player,
@@ -75,27 +74,27 @@ class GameContainer extends React.Component {
       Type: PLAY_TURN,
       Map: newMap
     }));
-
-    // TODO: send turn to webserver
   };
 
   render() {
     return (
-        <div>
-          <button onClick={this.handleClick}>stress test</button>
-          <button onClick={() => {
-            this.connection.getWs().send('testMsg')
-          }}>test wesbsocket
-          </button>
-          {this.state.Player !== -1
-              ? <p>You are player {this.state.Player}</p>
-              : <p>Game has not started yet</p>
-          }
-          {this.state.TurnOf !== -1 && this.state.TurnOf === this.state.Player
-              ? <p>Your turn</p>
-              : <p>Not your turn</p>
-          }
-          <Game {...this.state} onPawnPlayed={this.handleTurn}/>
+        <div className="game-container">
+          <div className="game-info">
+            <h1 className="game-title">Gomoku</h1>
+            <div className="game-indicator-container">
+              {this.state.Player !== -1
+                  ? <div className="game-indicator">You are player {this.state.Player}</div>
+                  : <div className="game-indicator warning">Game has not started yet</div>
+              }
+              {this.state.TurnOf !== -1 && this.state.TurnOf === this.state.Player
+                  ? <div className="game-indicator">Your turn</div>
+                  : <div className="game-indicator warning">Not your turn</div>
+              }
+            </div>
+          </div>
+          <div className="canvas-container">
+            <Game {...this.state} onPawnPlayed={this.handleTurn}/>
+          </div>
         </div>
     )
   }

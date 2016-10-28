@@ -1,0 +1,43 @@
+body {
+    font-family: 'Libre Franklin', sans-serif;
+    font-weight: bold;
+    color: rgb(245, 245, 245);
+}
+
+.game-container {
+    width: 100%;
+    max-width: 1660px;
+    height: 100%;
+    margin: auto;
+}
+
+.game-info {
+    text-align: center;
+}
+
+.game-indicator {
+    margin: 5px;
+}
+
+.warning {
+    color: #FF5722;
+}
+
+.container {
+    background-color: #5D4037;
+    height: 100%;
+}
+
+.game-title {
+    font-size: 3rem;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.canvas-container {
+    margin: auto;
+}
+
+#root {
+    height: 100%;
+}
