@@ -101,7 +101,6 @@ class Game extends React.Component {
     this.widthCaseGame = 2.6 * 3;
     this.widthBoardGame = 60 * 3;
     this.widthGrid = 57 * 3;
-    this.animationAppear = genPawnAppearAnimation();
     this.reflectivityTexture = new Texture('/textures/reflectivity.png', this.scene);
     this.pawnTexture = new Texture('/textures/pawn.png', this.scene);
     this.initWoodMaterial();
