@@ -7,7 +7,9 @@
   // play turn, waiting a user action
   'PLAY_TURN',
   // game ended, contain winning player
-  'END_OF_GAME'
+  'END_OF_GAME',
+  // contains the map
+  'REFRESH'
 ]
 
 /*
@@ -44,7 +46,9 @@
       // might be not useful, we'll see
       Playable: boolean
     }
-  ]
+  ],
+  CapturedPawns : [2], // int
+  PawnsLeft: [2] // int
 }
 
 // END_OF_GAME
@@ -52,7 +56,7 @@
 {
   Type: 'END_OF_GAME',
   // player who won
-  winner: int,
+  Winner: int,
   Map: [
     {
       // 0 or 1 or -1 (noone)
@@ -61,5 +65,24 @@
       // might be not useful, we'll see
       Playable: boolean
     }
-  ]
+  ],
+  CapturedPawns : [2], // int
+  PawnsLeft: [2] // int
+}
+
+// REFRESH
+// Simple refresh of map DATA
+{
+  Type: 'REFRESH',
+  Map: [
+    {
+      // 0 or 1 or -1 (noone)
+      Player: int,
+      Empty: boolean,
+      // might be not useful, we'll see
+      Playable: boolean
+    }
+  ],
+  CapturedPawns : [2], // int
+  PawnsLeft: [2] // int
 }
