@@ -41,19 +41,23 @@ class GameContainer extends React.Component {
       })
     };
     const wsConnectedCb = () => {
+      this.setState({ws: 'connected'});
       this.connection.getWs().send(JSON.stringify({
         Type: ENTER_ROOM,
         Room: 42
       }));
     };
-
-    this.connection = new Connection(messageHandlers, wsConnectedCb);
+    const wsDisconnectedCb = () => {
+      this.setState({ws: 'disconnected'})
+    };
+    this.connection = new Connection(messageHandlers, wsConnectedCb, wsDisconnectedCb);
 
     this.state = {
       Map: [],
       TurnOf: -1,
       Player: -1,
-      GameStarted: false
+      GameStarted: false,
+      ws: 'disconnected'
     };
   }
 
@@ -86,14 +90,18 @@ class GameContainer extends React.Component {
             <div className="game-indicator-container">
               {this.state.GameStarted
                   ? this.state.Player !== 2
-                        ? <div className="game-indicator">You are player {this.state.Player}</div>
-                        : <div className="game-indicator">Spectator</div>
+                  ? <div className="game-indicator">You are player {this.state.Player}</div>
+                  : <div className="game-indicator">Spectator</div>
 
                   : <div className="game-indicator warning">Game has not started yet</div>
               }
               {this.state.GameStarted && this.state.TurnOf === this.state.Player
                   ? <div className="game-indicator">Your turn</div>
                   : <div className="game-indicator warning">Not your turn</div>
+              }
+              {this.state.ws === 'connected'
+                  ? <div className="game-indicator">Connected</div>
+                  : <div className="game-indicator warning">Disconnected</div>
               }
             </div>
           </div>

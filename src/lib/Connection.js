@@ -12,32 +12,57 @@ export const ENTER_ROOM = 'ENTER_ROOM';
 export const REFRESH = 'REFRESH';
 
 class Connection {
-  constructor(messageHandlers, cb) {
+  constructor(messageHandlers, onOpenCb, onCloseCb) {
+    this.url = "ws://localhost:8080/ws";
     this.messageHandlers = messageHandlers;
-    this.ws = new WebSocket("ws://localhost:8080/ws");
+    this.reconnectAttempts = 0;
+    this.nbReconnectAttempts = 5;
+    this.onOpenCb = onOpenCb;
+    this.onCloseCb = onCloseCb;
+    this.initWs();
+  }
 
-    this.ws.onopen = function (evt) {
-      console.log("WS OPEN");
-      cb();
-    };
+  initWs() {
+    try {
+      this.ws = new WebSocket(this.url);
 
-    this.ws.onclose = function (evt) {
-      console.log("WS CLOSE");
-      this.ws = null;
-    };
+      this.ws.onopen = (evt) => {
+        console.log("WS OPEN");
+        this.reconnectAttempts = 0;
+        this.onOpenCb();
+      };
 
-    this.ws.onmessage = (evt) => {
-      try {
-        const action = JSON.parse(evt.data);
-        this.handleMessage(action);
+      this.ws.onclose = (evt) => {
+        console.log(`WS CLOSE code: ${evt.code}`);
+        this.onCloseCb();
+        this.reconnect();
+      };
+
+      this.ws.onmessage = (evt) => {
+        try {
+          const action = JSON.parse(evt.data);
+          this.handleMessage(action);
+        }
+        catch (e) {
+          console.log('WS JSON parsing of message failed', e);
+        }
+      };
+
+      this.ws.onerror = (evt) => {
+        console.log("WS ERROR");
       }
-      catch (e) {
-        console.log('WS JSON parsing of message failed', e);
-      }
-    };
 
-    this.ws.onerror = function (evt) {
-      console.log("WS ERROR: " + evt.data);
+    }
+    catch (e) {
+      console.log('error while initializing ws', e);
+      this.reconnect();
+    }
+  }
+
+  reconnect() {
+    if (this.reconnectAttempts < this.nbReconnectAttempts) {
+      this.reconnectAttempts += 1;
+      setTimeout(() => this.initWs(), 1000);
     }
   }
 
