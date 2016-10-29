@@ -85,7 +85,10 @@ class GameContainer extends React.Component {
             <h1 className="game-title">Gomoku</h1>
             <div className="game-indicator-container">
               {this.state.GameStarted
-                  ? <div className="game-indicator">You are player {this.state.Player}</div>
+                  ? this.state.Player !== 2
+                        ? <div className="game-indicator">You are player {this.state.Player}</div>
+                        : <div className="game-indicator">Spectator</div>
+
                   : <div className="game-indicator warning">Game has not started yet</div>
               }
               {this.state.GameStarted && this.state.TurnOf === this.state.Player
