@@ -6,7 +6,7 @@ import {
     MeshBuilder,
     HDRCubeTexture,
     CubeTexture,
-    Animation,
+//      Animation,
     PBRMaterial,
     StandardMaterial,
     Mesh,
@@ -20,7 +20,7 @@ import forEach from 'lodash/forEach';
 import config from './config';
 import {toCoord, toIdx} from './lib/Map';
 
-const genPawnAppearAnimation = () => {
+/*const genPawnAppearAnimation = () => {
   const animationAppear = new Animation('appear', 'material.alpha', 50, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
   const keys = [{
     frame: 0,
@@ -35,7 +35,7 @@ const genPawnAppearAnimation = () => {
 
   animationAppear.setKeys(keys);
   return animationAppear
-};
+};*/
 
 class Game extends React.Component {
   constructor(props) {
