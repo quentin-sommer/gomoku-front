@@ -55,11 +55,12 @@ class GameContainer extends React.Component {
       this.setState({ws: 'disconnected'})
     };
     this.connection = new Connection(messageHandlers, wsConnectedCb, wsDisconnectedCb);
-
+    const availablePawns = [60, 60];
+    const capturedPawns = [0, 0];
     this.state = {
       Map: [],
-      AvailablePawns: [],
-      CapturedPawns: [],
+      AvailablePawns: availablePawns,
+      CapturedPawns: capturedPawns,
       TurnOf: -1,
       Player: -1,
       GameStarted: false,
@@ -102,14 +103,17 @@ class GameContainer extends React.Component {
             <div className="game-indicator-container">
               {this.state.GameStarted
                   ? this.state.Player !== 2
-                  ? <div className="game-indicator">You are player {this.state.Player}</div>
+                  ? <div className="game-indicator">You are playing the {this.state.Player === 0 ? 'white' : 'black'}, Pawns
+                left: {this.state.AvailablePawns[this.state.Player]}</div>
                   : <div className="game-indicator">Spectator</div>
 
                   : <div className="game-indicator warning">Game has not started yet</div>
               }
-              {this.state.GameStarted && this.state.TurnOf === this.state.Player
+              {this.state.GameStarted
+                  ? this.state.TurnOf === this.state.Player
                   ? <div className="game-indicator">Your turn</div>
                   : <div className="game-indicator warning">Not your turn</div>
+                  : ''
               }
               {this.state.ws === 'connected'
                   ? <div className="game-indicator">Connected</div>
