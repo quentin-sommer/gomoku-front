@@ -31,13 +31,17 @@ class GameContainer extends React.Component {
       console.log('message: ', action.Type);
       this.setState({
         TurnOf: this.state.Player,
-        Map: action.Map
+        Map: action.Map,
+        AvailablePawns: action.AvailablePawns,
+        CapturedPawns: action.CapturedPawns
       })
     };
     messageHandlers[REFRESH] = (action) => {
       console.log('message: ', action.Type);
       this.setState({
-        Map: action.Map
+        Map: action.Map,
+        AvailablePawns: action.AvailablePawns,
+        CapturedPawns: action.CapturedPawns
       })
     };
     const wsConnectedCb = () => {
@@ -54,6 +58,8 @@ class GameContainer extends React.Component {
 
     this.state = {
       Map: [],
+      AvailablePawns: [],
+      CapturedPawns: [],
       TurnOf: -1,
       Player: -1,
       GameStarted: false,
@@ -67,18 +73,24 @@ class GameContainer extends React.Component {
    */
   handleTurn = (cellIndex) => {
     const newMap = this.state.Map.slice(0);
+    const availablePawns = this.state.AvailablePawns.slice(0);
+
     newMap[cellIndex] = {
       Player: this.state.Player,
       Empty: false,
       Playable: false
     };
+    availablePawns[this.state.Player] = availablePawns[this.state.Player] - 1;
+
     this.setState({
       Map: newMap,
-      TurnOf: (this.state.Player === 0) ? 1 : 0
+      TurnOf: (this.state.Player === 0) ? 1 : 0,
+      AvailablePawns: availablePawns
     });
     this.connection.getWs().send(JSON.stringify({
       Type: PLAY_TURN,
-      Map: newMap
+      Map: newMap,
+      AvailablePawns: availablePawns
     }));
   };
 
