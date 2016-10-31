@@ -103,8 +103,9 @@ class GameContainer extends React.Component {
             <div className="game-indicator-container">
               {this.state.GameStarted
                   ? this.state.Player !== 2
-                  ? <div className="game-indicator">You are playing the {this.state.Player === 0 ? 'white' : 'black'}, Pawns
-                left: {this.state.AvailablePawns[this.state.Player]}</div>
+                  ? <div className="game-indicator">
+                You are playing the {this.state.Player === 0 ? 'white' : 'black'},
+                Pawns left: {this.state.AvailablePawns[this.state.Player]}</div>
                   : <div className="game-indicator">Spectator</div>
 
                   : <div className="game-indicator warning">Game has not started yet</div>
