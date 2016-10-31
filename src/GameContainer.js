@@ -100,36 +100,18 @@ class GameContainer extends React.Component {
         <div className="game-container">
           <div className="game-info">
             <h1 className="game-title">Gomoku</h1>
-            {this.state.ws === 'connected'
-                ? <div className="game-indicator">Websocket: Connected</div>
-                : <div className="game-indicator">Websocket: <span className="warning">Disconnected</span></div>
-            }
-            <div className="game-indicator-container">
-              {this.state.GameStarted
-                  ? this.state.Player !== 2
-                  ? <div className="game-indicator">
-                <div>You are playing the {this.state.Player === 0 ? 'white' : 'black'}</div>
-                <div>Pawns left: {this.state.AvailablePawns[this.state.Player]}/60</div>
-              </div>
-                  : <div className="game-indicator">Spectator</div>
-                  : <div className="game-indicator warning">Waiting for another player</div>
-              }
-              {this.state.GameStarted
-                  ? this.state.TurnOf === this.state.Player
-                  ? <div className="game-indicator">Your turn</div>
-                  : <div className="game-indicator warning">Not your turn</div>
-                  : ''
-              }
-              {this.state.GameStarted && this.state.Player !== 2
-                  ? <div className="game-indicator">
-                <div>You captured {this.state.CapturedPawns[this.state.Player]} pawns</div>
-                <div>You
-                  lost {this.state.CapturedPawns[(this.state.Player === 0) ? 1 : 0]} pawns
-                </div>
-              </div>
-                  : ''
+            <div className="game-indicator">Websocket status:
+              {this.state.ws === 'connected'
+                  ? <span> Connected</span>
+                  : <span className="warning"> Disconnected</span>
               }
             </div>
+            {this.state.GameStarted ?
+                this.state.Player !== 2
+                    ? this.genPlayerInterface()
+                    : this.genSpectatorInterface()
+                : this.genWaitForPlayer()
+            }
           </div>
           <div className="canvas-container">
             <Game {...this.state} onPawnPlayed={this.handleTurn}/>
@@ -137,6 +119,45 @@ class GameContainer extends React.Component {
         </div>
     )
   }
+
+  genPlayerInterface = () => (
+      <div className="game-indicator-container">
+        <div className="game-indicator">
+          <div>You are playing the {this.state.Player === 0 ? 'white' : 'black'}</div>
+          <div>Pawns left: {this.state.AvailablePawns[this.state.Player]}/60</div>
+        </div>
+        {this.state.TurnOf === this.state.Player
+            ? <div className="game-indicator">Your turn</div>
+            : <div className="game-indicator warning">Not your turn</div>
+        }
+        <div className="game-indicator">
+          <div>You captured {this.state.CapturedPawns[this.state.Player]} pawns</div>
+          <div>You
+            lost {this.state.CapturedPawns[(this.state.Player === 0) ? 1 : 0]} pawns
+          </div>
+        </div>
+      </div>
+  );
+
+  genSpectatorInterface = () => (
+      <div className="game-indicator-container">
+        <div className="game-indicator">
+          <div>White pawns left: {this.state.AvailablePawns[0]}/60</div>
+          <div>Black pawns left: {this.state.AvailablePawns[1]}/60</div>
+        </div>
+        <div className="game-indicator">Spectator</div>
+        <div className="game-indicator">
+          <div>Captured white pawns: {this.state.CapturedPawns[0]}</div>
+          <div>Captured black pawns: {this.state.CapturedPawns[1]}</div>
+        </div>
+      </div>
+  );
+
+  genWaitForPlayer = () => (
+      <div className="game-indicator-container">
+        <div className="game-indicator warning">Waiting for another player</div>
+      </div>
+  );
 }
 
 export default GameContainer;
