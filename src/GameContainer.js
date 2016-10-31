@@ -12,49 +12,18 @@ import Connection, {
 class GameContainer extends React.Component {
   constructor(props) {
     super(props);
-    const messageHandlers = [];
 
-    messageHandlers[IDLE] = (action) => {
-      console.log('message: ', action.Type);
-    };
-    messageHandlers[START_OF_GAME] = (action) => {
-      console.log('message: ', action.Type);
-      this.setState({
-        GameStarted: true,
-        Player: action.PlayerNumber
-      })
-    };
-    messageHandlers[END_OF_GAME] = (action) => {
-      console.log('message: ', action.Type);
-    };
-    messageHandlers[PLAY_TURN] = (action) => {
-      console.log('message: ', action.Type);
-      this.setState({
-        TurnOf: this.state.Player,
-        Map: action.Map,
-        AvailablePawns: action.AvailablePawns,
-        CapturedPawns: action.CapturedPawns
-      })
-    };
-    messageHandlers[REFRESH] = (action) => {
-      console.log('message: ', action.Type);
-      this.setState({
-        Map: action.Map,
-        AvailablePawns: action.AvailablePawns,
-        CapturedPawns: action.CapturedPawns
-      })
-    };
     const wsConnectedCb = () => {
-      this.setState({ws: 'connected'});
+      this.setState({Ws: 'connected'});
       this.connection.getWs().send(JSON.stringify({
         Type: ENTER_ROOM,
         Room: 42
       }));
     };
     const wsDisconnectedCb = () => {
-      this.setState({ws: 'disconnected'})
+      this.setState({Ws: 'disconnected'})
     };
-    this.connection = new Connection(messageHandlers, wsConnectedCb, wsDisconnectedCb);
+    this.connection = new Connection(this.getMessagesHandlers(), wsConnectedCb, wsDisconnectedCb);
     const availablePawns = [60, 60];
     const capturedPawns = [0, 0];
     this.state = {
@@ -64,7 +33,9 @@ class GameContainer extends React.Component {
       TurnOf: -1,
       Player: -1,
       GameStarted: false,
-      ws: 'disconnected'
+      GameEnded: false,
+      Winner: -1,
+      Ws: 'disconnected'
     };
   }
 
@@ -95,13 +66,56 @@ class GameContainer extends React.Component {
     }));
   };
 
+  getMessagesHandlers() {
+    const messageHandlers = [];
+
+    messageHandlers[IDLE] = (action) => {
+      console.log('message: ', action.Type);
+    };
+    messageHandlers[START_OF_GAME] = (action) => {
+      console.log('message: ', action.Type);
+      this.setState({
+        GameStarted: true,
+        Player: action.PlayerNumber
+      });
+    };
+    messageHandlers[END_OF_GAME] = (action) => {
+      console.log('message: ', action.Type);
+      // TODO : check with backend if map needs to be updated here
+      this.setState({
+        Winner: action.Winner,
+        GameStarted: false,
+        GameEnded: true
+      });
+    };
+    messageHandlers[PLAY_TURN] = (action) => {
+      console.log('message: ', action.Type);
+      this.setState({
+        TurnOf: this.state.Player,
+        Map: action.Map,
+        AvailablePawns: action.AvailablePawns,
+        CapturedPawns: action.CapturedPawns
+      });
+    };
+    messageHandlers[REFRESH] = (action) => {
+      console.log('message: ', action.Type);
+      this.setState({
+        Map: action.Map,
+        AvailablePawns: action.AvailablePawns,
+        CapturedPawns: action.CapturedPawns
+      });
+    };
+
+    return messageHandlers
+  }
+
   render() {
     return (
         <div className="game-container">
           <div className="game-info">
             <h1 className="game-title">Gomoku</h1>
             <div className="game-indicator">Websocket status:
-              {this.state.ws === 'connected'
+              {this.state.Ws === 'connected'
                   ? <span> Connected</span>
                   : <span className="warning"> Disconnected</span>
               }
@@ -110,6 +124,8 @@ class GameContainer extends React.Component {
                 this.state.Player !== 2
                     ? this.genPlayerInterface()
                     : this.genSpectatorInterface()
+                : this.state.GameEnded
+                ? this.genEndScreen()
                 : this.genWaitForPlayer()
             }
           </div>
@@ -156,6 +172,23 @@ class GameContainer extends React.Component {
   genWaitForPlayer = () => (
       <div className="game-indicator-container">
         <div className="game-indicator warning">Waiting for another player</div>
+      </div>
+  );
+
+  genEndScreen = () => (
+      <div className="game-indicator-container">
+        <div className="game-indicator">
+          <div>White pawns left: {this.state.AvailablePawns[0]}/60</div>
+          <div>Black pawns left: {this.state.AvailablePawns[1]}/60</div>
+        </div>
+        <div className="game-indicator">
+          <div>Game is finished</div>
+          <div>Winner: {this.state.Winner === 0 ? 'white' : 'black'}</div>
+        </div>
+        <div className="game-indicator">
+          <div>Captured white pawns: {this.state.CapturedPawns[0]}</div>
+          <div>Captured black pawns: {this.state.CapturedPawns[1]}</div>
+        </div>
       </div>
   );
 }
