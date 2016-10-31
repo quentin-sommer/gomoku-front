@@ -17,6 +17,18 @@ body {
 
 .game-indicator {
     margin: 5px;
+    flex: 33%;
+}
+
+.game-indicator div:last-child {
+    margin-top: 5px;
+}
+
+.game-indicator-container {
+    display: flex;
+    width: 80%;
+    margin: auto;
+    justify-content: center;
 }
 
 .warning {

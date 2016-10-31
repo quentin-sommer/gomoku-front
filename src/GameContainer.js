@@ -100,15 +100,19 @@ class GameContainer extends React.Component {
         <div className="game-container">
           <div className="game-info">
             <h1 className="game-title">Gomoku</h1>
+            {this.state.ws === 'connected'
+                ? <div className="game-indicator">Websocket: Connected</div>
+                : <div className="game-indicator">Websocket: <span className="warning">Disconnected</span></div>
+            }
             <div className="game-indicator-container">
               {this.state.GameStarted
                   ? this.state.Player !== 2
                   ? <div className="game-indicator">
-                You are playing the {this.state.Player === 0 ? 'white' : 'black'},
-                Pawns left: {this.state.AvailablePawns[this.state.Player]}</div>
+                <div>You are playing the {this.state.Player === 0 ? 'white' : 'black'}</div>
+                <div>Pawns left: {this.state.AvailablePawns[this.state.Player]}/60</div>
+              </div>
                   : <div className="game-indicator">Spectator</div>
-
-                  : <div className="game-indicator warning">Game has not started yet</div>
+                  : <div className="game-indicator warning">Waiting for another player</div>
               }
               {this.state.GameStarted
                   ? this.state.TurnOf === this.state.Player
@@ -116,9 +120,14 @@ class GameContainer extends React.Component {
                   : <div className="game-indicator warning">Not your turn</div>
                   : ''
               }
-              {this.state.ws === 'connected'
-                  ? <div className="game-indicator">Connected</div>
-                  : <div className="game-indicator warning">Disconnected</div>
+              {this.state.GameStarted && this.state.Player !== 2
+                  ? <div className="game-indicator">
+                <div>You captured {this.state.CapturedPawns[this.state.Player]} pawns</div>
+                <div>You
+                  lost {this.state.CapturedPawns[(this.state.Player === 0) ? 1 : 0]} pawns
+                </div>
+              </div>
+                  : ''
               }
             </div>
           </div>
