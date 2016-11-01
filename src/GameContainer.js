@@ -152,8 +152,8 @@ class GameContainer extends React.Component {
         }
         <div className="game-indicator">
           <div>You captured {this.state.CapturedPawns[this.state.Player]} pawns</div>
-          <div>You
-            lost {this.state.CapturedPawns[(this.state.Player === 0) ? 1 : 0]} pawns
+          <div>
+            You lost {this.state.CapturedPawns[(this.state.Player === 0) ? 1 : 0]} pawns
           </div>
         </div>
       </div>
@@ -167,8 +167,8 @@ class GameContainer extends React.Component {
         </div>
         <div className="game-indicator">Spectator</div>
         <div className="game-indicator">
-          <div>Captured white pawns: {this.state.CapturedPawns[0]}</div>
-          <div>Captured black pawns: {this.state.CapturedPawns[1]}</div>
+          <div>Captured white pawns: {this.state.CapturedPawns[1]}</div>
+          <div>Captured black pawns: {this.state.CapturedPawns[0]}</div>
         </div>
       </div>
   );
@@ -190,8 +190,8 @@ class GameContainer extends React.Component {
           <div>Winner: {this.state.Winner === 0 ? 'white' : 'black'}</div>
         </div>
         <div className="game-indicator">
-          <div>Captured white pawns: {this.state.CapturedPawns[0]}</div>
-          <div>Captured black pawns: {this.state.CapturedPawns[1]}</div>
+          <div>Captured white pawns: {this.state.CapturedPawns[1]}</div>
+          <div>Captured black pawns: {this.state.CapturedPawns[0]}</div>
         </div>
       </div>
   );
