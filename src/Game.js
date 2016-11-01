@@ -52,8 +52,10 @@ class Game extends React.Component {
   }
 
   render() {
+    console.log("Render Game")
     forEach(this.props.Map, (cell, index) => {
       if (!cell.Empty) {
+        console.log("Isn't empty")
         // optimizing cpu using bitshift
         const coords = toCoord(index);
         this.addPawnToBoard(coords.x, coords.y, cell.Player);

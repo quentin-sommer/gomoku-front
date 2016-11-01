@@ -81,11 +81,15 @@ class GameContainer extends React.Component {
     };
     messageHandlers[END_OF_GAME] = (action) => {
       console.log('message: ', action.Type);
+      console.log(action)
       // TODO : check with backend if map needs to be updated here
       this.setState({
         Winner: action.Winner,
         GameStarted: false,
-        GameEnded: true
+        GameEnded: true,
+        Map: action.map,
+        AvailablePawns: action.AvailablePawns,
+        CapturedPawns: action.CapturedPawns
       });
     };
     messageHandlers[PLAY_TURN] = (action) => {
