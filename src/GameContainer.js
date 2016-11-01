@@ -87,7 +87,7 @@ class GameContainer extends React.Component {
         Winner: action.Winner,
         GameStarted: false,
         GameEnded: true,
-        Map: action.map,
+        Map: action.Map,
         AvailablePawns: action.AvailablePawns,
         CapturedPawns: action.CapturedPawns
       });
