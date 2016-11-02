@@ -52,7 +52,7 @@ class GameContainer extends React.Component {
       Empty: false,
       Playable: false
     };
-    availablePawns[this.state.Player] = availablePawns[this.state.Player] - 1;
+    availablePawns[this.state.Player] = availablePawns[this.state.Player] + 1;
 
     this.setState({
       Map: newMap,
@@ -81,8 +81,6 @@ class GameContainer extends React.Component {
     };
     messageHandlers[END_OF_GAME] = (action) => {
       console.log('message: ', action.Type);
-      console.log(action)
-      // TODO : check with backend if map needs to be updated here
       this.setState({
         Winner: action.Winner,
         GameStarted: false,
@@ -144,7 +142,7 @@ class GameContainer extends React.Component {
       <div className="game-indicator-container">
         <div className="game-indicator">
           <div>You are playing the {this.state.Player === 0 ? 'white' : 'black'}</div>
-          <div>Pawns left: {this.state.AvailablePawns[this.state.Player]}/60</div>
+          <div>Turns played: {this.state.AvailablePawns[this.state.Player]}</div>
         </div>
         {this.state.TurnOf === this.state.Player
             ? <div className="game-indicator">Your turn</div>
@@ -162,8 +160,8 @@ class GameContainer extends React.Component {
   genSpectatorInterface = () => (
       <div className="game-indicator-container">
         <div className="game-indicator">
-          <div>White pawns left: {this.state.AvailablePawns[0]}/60</div>
-          <div>Black pawns left: {this.state.AvailablePawns[1]}/60</div>
+          <div>White turns played: {this.state.AvailablePawns[0]}</div>
+          <div>Black turns played: {this.state.AvailablePawns[1]}</div>
         </div>
         <div className="game-indicator">Spectator</div>
         <div className="game-indicator">
@@ -182,8 +180,8 @@ class GameContainer extends React.Component {
   genEndScreen = () => (
       <div className="game-indicator-container">
         <div className="game-indicator">
-          <div>White pawns left: {this.state.AvailablePawns[0]}/60</div>
-          <div>Black pawns left: {this.state.AvailablePawns[1]}/60</div>
+          <div>White turns played: {this.state.AvailablePawns[0]}</div>
+          <div>Black turns played: {this.state.AvailablePawns[1]}</div>
         </div>
         <div className="game-indicator">
           <div>Game is finished</div>
