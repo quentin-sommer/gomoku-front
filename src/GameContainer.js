@@ -24,11 +24,11 @@ class GameContainer extends React.Component {
       this.setState({Ws: 'disconnected'})
     };
     this.connection = new Connection(this.getMessagesHandlers(), wsConnectedCb, wsDisconnectedCb);
-    const availablePawns = [60, 60];
+    const turnsPlayed = [60, 60];
     const capturedPawns = [0, 0];
     this.state = {
       Map: [],
-      AvailablePawns: availablePawns,
+      TurnsPlayed: turnsPlayed,
       CapturedPawns: capturedPawns,
       TurnOf: -1,
       Player: -1,
@@ -45,24 +45,24 @@ class GameContainer extends React.Component {
    */
   handleTurn = (cellIndex) => {
     const newMap = this.state.Map.slice(0);
-    const availablePawns = this.state.AvailablePawns.slice(0);
+    const turnsPlayed = this.state.TurnsPlayed.slice(0);
 
     newMap[cellIndex] = {
       Player: this.state.Player,
       Empty: false,
       Playable: false
     };
-    availablePawns[this.state.Player] = availablePawns[this.state.Player] + 1;
+    turnsPlayed[this.state.Player] = turnsPlayed[this.state.Player] + 1;
 
     this.setState({
       Map: newMap,
       TurnOf: (this.state.Player === 0) ? 1 : 0,
-      AvailablePawns: availablePawns
+      TurnsPlayed: turnsPlayed
     });
     this.connection.getWs().send(JSON.stringify({
       Type: PLAY_TURN,
       Map: newMap,
-      AvailablePawns: availablePawns
+      TurnsPlayed: turnsPlayed
     }));
   };
 
@@ -86,7 +86,7 @@ class GameContainer extends React.Component {
         GameStarted: false,
         GameEnded: true,
         Map: action.Map,
-        AvailablePawns: action.AvailablePawns,
+        TurnsPlayed: action.TurnsPlayed,
         CapturedPawns: action.CapturedPawns
       });
     };
@@ -95,7 +95,7 @@ class GameContainer extends React.Component {
       this.setState({
         TurnOf: this.state.Player,
         Map: action.Map,
-        AvailablePawns: action.AvailablePawns,
+        TurnsPlayed: action.TurnsPlayed,
         CapturedPawns: action.CapturedPawns
       });
     };
@@ -103,7 +103,7 @@ class GameContainer extends React.Component {
       console.log('message: ', action.Type);
       this.setState({
         Map: action.Map,
-        AvailablePawns: action.AvailablePawns,
+        TurnsPlayed: action.TurnsPlayed,
         CapturedPawns: action.CapturedPawns
       });
     };
@@ -142,7 +142,7 @@ class GameContainer extends React.Component {
       <div className="game-indicator-container">
         <div className="game-indicator">
           <div>You are playing the {this.state.Player === 0 ? 'white' : 'black'}</div>
-          <div>Turns played: {this.state.AvailablePawns[this.state.Player]}</div>
+          <div>Turns played: {this.state.TurnsPlayed[this.state.Player]}</div>
         </div>
         {this.state.TurnOf === this.state.Player
             ? <div className="game-indicator">Your turn</div>
@@ -160,8 +160,8 @@ class GameContainer extends React.Component {
   genSpectatorInterface = () => (
       <div className="game-indicator-container">
         <div className="game-indicator">
-          <div>White turns played: {this.state.AvailablePawns[0]}</div>
-          <div>Black turns played: {this.state.AvailablePawns[1]}</div>
+          <div>White turns played: {this.state.TurnsPlayed[0]}</div>
+          <div>Black turns played: {this.state.TurnsPlayed[1]}</div>
         </div>
         <div className="game-indicator">Spectator</div>
         <div className="game-indicator">
@@ -180,8 +180,8 @@ class GameContainer extends React.Component {
   genEndScreen = () => (
       <div className="game-indicator-container">
         <div className="game-indicator">
-          <div>White turns played: {this.state.AvailablePawns[0]}</div>
-          <div>Black turns played: {this.state.AvailablePawns[1]}</div>
+          <div>White turns played: {this.state.TurnsPlayed[0]}</div>
+          <div>Black turns played: {this.state.TurnsPlayed[1]}</div>
         </div>
         <div className="game-indicator">
           <div>Game is finished</div>
