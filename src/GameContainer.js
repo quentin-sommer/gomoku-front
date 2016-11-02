@@ -17,7 +17,7 @@ class GameContainer extends React.Component {
       this.setState({Ws: 'connected'});
       this.connection.getWs().send(JSON.stringify({
         Type: ENTER_ROOM,
-        Room: 42
+        Room: this.props.room
       }));
     };
     const wsDisconnectedCb = () => {
