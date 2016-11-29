@@ -1,13 +1,6 @@
-import React from 'react';
-import Game from './Game';
-import Connection, {
-    IDLE,
-    START_OF_GAME,
-    END_OF_GAME,
-    PLAY_TURN,
-    ENTER_ROOM,
-    REFRESH
-} from './lib/Connection';
+import React from 'react'
+import Game from './Game'
+import Connection, {IDLE, START_OF_GAME, END_OF_GAME, PLAY_TURN, ENTER_ROOM, REFRESH} from './lib/Connection'
 
 class GameContainer extends React.Component {
   constructor(props) {
@@ -17,7 +10,8 @@ class GameContainer extends React.Component {
       this.setState({Ws: 'connected'});
       this.connection.getWs().send(JSON.stringify({
         Type: ENTER_ROOM,
-        Room: this.props.room
+        Room: this.props.room,
+        AiMode: this.props.aiMode
       }));
     };
     const wsDisconnectedCb = () => {
@@ -35,7 +29,8 @@ class GameContainer extends React.Component {
       GameStarted: false,
       GameEnded: false,
       Winner: -1,
-      Ws: 'disconnected'
+      Ws: 'disconnected',
+      iaStrength: 3
     };
   }
 
@@ -64,6 +59,12 @@ class GameContainer extends React.Component {
       Map: newMap,
       TurnsPlayed: turnsPlayed
     }));
+  };
+  handleAIChange = (iaStrength) => {
+    iaStrength = parseInt(iaStrength);
+    this.setState({
+      iaStrength: iaStrength
+    });
   };
 
   getMessagesHandlers() {
@@ -113,85 +114,103 @@ class GameContainer extends React.Component {
 
   render() {
     return (
-        <div className="game-container">
-          <div className="game-info">
-            <h1 className="game-title">Gomoku</h1>
-            <div className="game-indicator">Websocket status:
-              {this.state.Ws === 'connected'
-                  ? <span> Connected</span>
-                  : <span className="warning"> Disconnected</span>
-              }
-            </div>
-            {this.state.GameStarted ?
-                this.state.Player !== 2
-                    ? this.genPlayerInterface()
-                    : this.genSpectatorInterface()
-                : this.state.GameEnded
-                ? this.genEndScreen()
-                : this.genWaitForPlayer()
+      <div className="game-container" >
+        <div className="game-info" >
+          <h1 className="game-title" >Gomoku</h1>
+          <div className="game-indicator" >Websocket status:
+            {this.state.Ws === 'connected'
+              ? <span> Connected</span>
+              : <span className="warning" > Disconnected</span>
             }
           </div>
-          <div className="canvas-container">
-            <Game {...this.state} onPawnPlayed={this.handleTurn}/>
-          </div>
+          {this.state.GameStarted ?
+            this.state.Player !== 2
+              ? this.genPlayerInterface()
+              : this.genSpectatorInterface()
+            : this.state.GameEnded
+            ? this.genEndScreen()
+            : this.genWaitForPlayer()
+          }
         </div>
+        <div className="canvas-container" >
+          <Game {...this.state} onPawnPlayed={this.handleTurn} />
+        </div>
+      </div>
     )
   }
 
   genPlayerInterface = () => (
-      <div className="game-indicator-container">
-        <div className="game-indicator">
-          <div>You are playing the {this.state.Player === 0 ? 'white' : 'black'}</div>
-          <div>Turns played: {this.state.TurnsPlayed[this.state.Player]}</div>
-        </div>
+    <div className="game-indicator-container" >
+      <div className="game-indicator" >
+        <div>You are playing the {this.state.Player === 0 ? 'white' : 'black'}</div>
+        <div>Turns played: {this.state.TurnsPlayed[this.state.Player]}</div>
+      </div>
+      <div className="game-indicator" >
         {this.state.TurnOf === this.state.Player
-            ? <div className="game-indicator">Your turn</div>
-            : <div className="game-indicator warning">Not your turn</div>
+          ? <div>Your turn</div>
+          : <div className="warning" >Not your turn</div>
         }
-        <div className="game-indicator">
-          <div>You captured {this.state.CapturedPawns[this.state.Player]} pawns</div>
+        <div>{this.props.aiMode
+          ?
           <div>
-            You lost {this.state.CapturedPawns[(this.state.Player === 0) ? 1 : 0]} pawns
+            <input
+              type="range"
+              min={1}
+              max={5}
+              value={this.state.iaStrength}
+              onChange={e => this.handleAIChange(e.target.value)}
+            />
+            <label>
+              {this.state.iaStrength}
+            </label>
           </div>
+          : ''}
         </div>
       </div>
+      <div className="game-indicator" >
+        <div>You captured {this.state.CapturedPawns[this.state.Player]} pawns</div>
+        <div>
+          You lost {this.state.CapturedPawns[(this.state.Player === 0) ? 1 : 0]} pawns
+        </div>
+      </div>
+    </div>
   );
 
   genSpectatorInterface = () => (
-      <div className="game-indicator-container">
-        <div className="game-indicator">
-          <div>White turns played: {this.state.TurnsPlayed[0]}</div>
-          <div>Black turns played: {this.state.TurnsPlayed[1]}</div>
-        </div>
-        <div className="game-indicator">Spectator</div>
-        <div className="game-indicator">
-          <div>Captured white pawns: {this.state.CapturedPawns[1]}</div>
-          <div>Captured black pawns: {this.state.CapturedPawns[0]}</div>
-        </div>
+    <div className="game-indicator-container" >
+      <div className="game-indicator" >
+        <div>White turns played: {this.state.TurnsPlayed[0]}</div>
+        <div>Black turns played: {this.state.TurnsPlayed[1]}</div>
       </div>
+      <div className="game-indicator" >Spectator</div>
+      <div className="game-indicator" >
+        <div>Captured white pawns: {this.state.CapturedPawns[1]}</div>
+        <div>Captured black pawns: {this.state.CapturedPawns[0]}</div>
+      </div>
+    </div>
   );
 
   genWaitForPlayer = () => (
-      <div className="game-indicator-container">
-        <div className="game-indicator warning">Waiting for another player</div>
-      </div>
+    <div className="game-indicator-container" >
+      <div className="game-indicator warning" >Waiting for another player</div>
+    </div>
   );
 
   genEndScreen = () => (
-      <div className="game-indicator-container">
-        <div className="game-indicator">
-          <div>White turns played: {this.state.TurnsPlayed[0]}</div>
-          <div>Black turns played: {this.state.TurnsPlayed[1]}</div>
-        </div>
-        <div className="game-indicator">
-          <div>Game is finished</div>
-          <div>Winner: {this.state.Winner === 0 ? 'white' : 'black'}</div>
-        </div>
-        <div className="game-indicator">
-          <div>Captured white pawns: {this.state.CapturedPawns[1]}</div>
-          <div>Captured black pawns: {this.state.CapturedPawns[0]}</div>
-        </div>
+    <div className="game-indicator-container" >
+      <div className="game-indicator" >
+        <div>White turns played: {this.state.TurnsPlayed[0]}</div>
+        <div>Black turns played: {this.state.TurnsPlayed[1]}</div>
       </div>
+      <div className="game-indicator" >
+        <div>Game is finished</div>
+        <div>Winner: {this.state.Winner === 0 ? 'white' : 'black'}</div>
+      </div>
+      <div className="game-indicator" >
+        <div>Captured white pawns: {this.state.CapturedPawns[1]}</div>
+        <div>Captured black pawns: {this.state.CapturedPawns[0]}</div>
+      </div>
+    </div>
   );
 }
 

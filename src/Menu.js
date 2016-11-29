@@ -1,5 +1,6 @@
 import React from 'react'
 import GameContainer from './GameContainer'
+import './menu.css'
 
 export default class Menu extends React.Component {
   constructor(props) {
@@ -7,13 +8,14 @@ export default class Menu extends React.Component {
 
     this.state = {
       room: 42,
+      aiMode: true,
       loadGame: false
     }
   }
 
   handleRoomFormSubmit = (e) => {
     e.preventDefault();
-    console.log('loading game with room', this.state.room);
+    console.log(`loading ${this.state.aiMode ? 'IA game' : 'human game'} game with room ${this.state.room}`);
     this.setState({
       loadGame: true
     })
@@ -29,7 +31,7 @@ export default class Menu extends React.Component {
     return (
       <div>
         {this.state.loadGame
-          ? <GameContainer room={this.state.room} />
+          ? <GameContainer room={this.state.room} aiMode={this.state.aiMode} />
           : this.genRoomForm()
         }
       </div>
@@ -45,8 +47,34 @@ export default class Menu extends React.Component {
     }} >
       <h1>Choose a room to enter</h1>
       <form onSubmit={this.handleRoomFormSubmit} >
-        <input type="number" placeholder="room number" required name="roomNumber" value={this.state.room} onChange={this.handleRoomChange} />
-        <button style={{marginLeft: '2rem'}} type="submit" >Enter room</button>
+        <div className="menu-form" >
+          <div className="form-elem" >
+            <input style={{width: '100%'}} type="number" placeholder="room number" required name="roomNumber" value={this.state.room} onChange={this.handleRoomChange} />
+          </div>
+          <div className="form-elem" >
+            <input
+              id="iagame"
+              type="radio"
+              name="iagame"
+              value="true"
+              checked={this.state.aiMode}
+              onChange={() => this.setState({aiMode: true})}
+            />
+            <label htmlFor="iagame" style={{marginLeft: '1rem'}} >Play against AI</label>
+          </div>
+          <div className="form-elem" >
+            <input
+              id="humangame"
+              type="radio"
+              name="iagame"
+              value="false"
+              checked={!this.state.aiMode}
+              onChange={() => this.setState({aiMode: false})}
+            />
+            <label htmlFor="humangame" style={{marginLeft: '1rem'}} >Play against human</label>
+          </div>
+          <button type="submit" >Enter room</button>
+        </div>
       </form>
     </div>
   )
