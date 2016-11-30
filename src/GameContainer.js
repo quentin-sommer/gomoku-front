@@ -61,7 +61,7 @@ class GameContainer extends React.Component {
     }));
   };
   handleAIChange = (iaStrength) => {
-    iaStrength = parseInt(iaStrength);
+    iaStrength = parseInt(iaStrength, 10);
     this.setState({
       iaStrength: iaStrength
     });
