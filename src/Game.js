@@ -1,41 +1,40 @@
-import React from 'react';
+import React from 'react'
 import {
-    Engine,
-    Scene,
-    Texture,
-    MeshBuilder,
-    HDRCubeTexture,
-    CubeTexture,
-//      Animation,
-    PBRMaterial,
-    StandardMaterial,
-    Mesh,
-    Color3,
-    Vector3,
-    ArcRotateCamera,
-    HemisphericLight,
-    Observable,
-} from 'babylonjs';
-import forEach from 'lodash/forEach';
-import config from './config';
-import {toCoord, toIdx} from './lib/Map';
+  Engine,
+  Scene,
+  Texture,
+  MeshBuilder,
+  HDRCubeTexture,
+  CubeTexture,
+  PBRMaterial,
+  StandardMaterial,
+  Mesh,
+  Color3,
+  Vector3,
+  ArcRotateCamera,
+  HemisphericLight,
+  Observable
+} from 'babylonjs'
+import forEach from 'lodash/forEach'
+import config from './config'
+import {toCoord, toIdx} from './lib/Map'
 
 /*const genPawnAppearAnimation = () => {
-  const animationAppear = new Animation('appear', 'material.alpha', 50, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
-  const keys = [{
-    frame: 0,
-    value: 0
-  }, {
-    frame: 30,
-    value: 0.7
-  }, {
-    frame: 60,
-    value: 1
-  }];
+ const animationAppear = new Animation('appear', 'material.alpha', 50, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
+ const keys = [{
+ frame: 0,
+ value: 0
+ }, {
+ frame: 30,
+ value: 0.7
+ }, {
+ frame: 60,
+ value: 1
+ }];
 
-  animationAppear.setKeys(keys);
-  return animationAppear
-};*/
+ animationAppear.setKeys(keys);
+ return animationAppear
+ };*/
 
 class Game extends React.Component {
   constructor(props) {
@@ -60,7 +59,7 @@ class Game extends React.Component {
       }
     });
     return (
-        <canvas id="renderCanvas"/>
+      <canvas id="renderCanvas" />
     )
   }
 
