@@ -68,20 +68,11 @@ class Connection {
 
   handleMessage(action) {
     const type = action.Type;
-    switch (type) {
-      case IDLE:
-        return this.messageHandlers[IDLE](action);
-      case START_OF_GAME:
-        return this.messageHandlers[START_OF_GAME](action);
-      case PLAY_TURN:
-        return this.messageHandlers[PLAY_TURN](action);
-      case END_OF_GAME:
-        return this.messageHandlers[END_OF_GAME](action);
-      case REFRESH:
-        return this.messageHandlers[REFRESH](action);
-      default:
-        console.log('invalid action type', type);
-        return null;
+    if (this.messageHandlers[type]) {
+      return this.messageHandlers[type](action);
+    } else {
+      console.log('invalid action type', type);
+      return null;
     }
   }
 
