@@ -9,7 +9,8 @@ export default class Menu extends React.Component {
     this.state = {
       room: 42,
       aiMode: true,
-      loadGame: false
+      // TODO: switch back to false
+      loadGame: true
     }
   }
 
