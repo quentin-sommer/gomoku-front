@@ -30,7 +30,7 @@ class GameContainer extends React.Component {
       GameEnded: false,
       Winner: -1,
       Ws: 'disconnected',
-      iaStrength: 3
+      iaStrength: 2
     };
   }
 
@@ -156,7 +156,7 @@ class GameContainer extends React.Component {
             <input
               type="range"
               min={1}
-              max={5}
+              max={3}
               value={this.state.iaStrength}
               onChange={e => this.handleAIChange(e.target.value)}
             />
