@@ -11,6 +11,8 @@ export const ENTER_ROOM = 'ENTER_ROOM';
 
 export const REFRESH = 'REFRESH';
 
+export const SET_AI_LEVEL = 'SET_AI_LEVEL';
+
 class Connection {
   constructor(messageHandlers, onOpenCb, onCloseCb) {
     this.url = "ws://localhost:8080/ws";

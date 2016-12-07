@@ -1,6 +1,14 @@
 import React from 'react'
 import Game from './Game'
-import Connection, {IDLE, START_OF_GAME, END_OF_GAME, PLAY_TURN, ENTER_ROOM, REFRESH} from './lib/Connection'
+import Connection, {
+  IDLE,
+  START_OF_GAME,
+  END_OF_GAME,
+  PLAY_TURN,
+  ENTER_ROOM,
+  REFRESH,
+  SET_AI_LEVEL
+} from './lib/Connection'
 
 class GameContainer extends React.Component {
   constructor(props) {
@@ -62,6 +70,10 @@ class GameContainer extends React.Component {
   };
   handleAIChange = (iaStrength) => {
     iaStrength = parseInt(iaStrength, 10);
+    this.connection.getWs().send(JSON.stringify({
+      Type: SET_AI_LEVEL,
+      Level: iaStrength
+    }));
     this.setState({
       iaStrength: iaStrength
     });
