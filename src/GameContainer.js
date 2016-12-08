@@ -168,7 +168,7 @@ class GameContainer extends React.Component {
             <input
               type="range"
               min={1}
-              max={3}
+              max={5}
               value={this.state.iaStrength}
               onChange={e => this.handleAIChange(e.target.value)}
             />
