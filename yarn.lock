@@ -940,9 +940,9 @@ babylon@^6.11.0, babylon@^6.11.2, babylon@^6.13.0:
   version "6.14.1"
   resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.14.1.tgz#956275fab72753ad9b3435d7afe58f8bf0a29815"
 
-babylonjs@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/babylonjs/-/babylonjs-2.4.1.tgz#194f859af51946a0616c82fa454a93c2693efe0d"
+babylonjs@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/babylonjs/-/babylonjs-2.5.0.tgz#82e72922b6d681d46c766aeaaafda74f572a6ed3"
 
 balanced-match@^0.4.1, balanced-match@^0.4.2:
   version "0.4.2"

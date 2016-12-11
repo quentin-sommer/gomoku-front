@@ -7,7 +7,7 @@
   },
   "homepage": "http://localhost:3000",
   "dependencies": {
-    "babylonjs": "^2.4.1",
+    "babylonjs": "^2.5.0",
     "lodash": "4.17.2",
     "normalize.css": "^5.0.0",
     "react": "^15.3.2",
