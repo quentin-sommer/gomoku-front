@@ -128,11 +128,17 @@ class GameContainer extends React.Component {
       });
     };
     messageHandlers[PLAY_TURN] = (action) => {
-      console.log('message: ', action.Type);
       if (this.state.TimeCounter !== -1) {
-        const aiTurn = this.getAiTurnStats();
-        const newChart = [...this.state.PlayTimes];
-        newChart[newChart.length - 1].AI = aiTurn;
+        let newChart;
+        // hack to prevent graph from being udpated when it's the same turn being replayed
+        if (this.state.PlayTimes[this.state.PlayTimes.length - 1].turnNumber === action.TurnsPlayed[1]) {
+          newChart = [...this.state.PlayTimes];
+          newChart.pop();
+        } else {
+          const aiTurn = this.getAiTurnStats();
+          newChart = [...this.state.PlayTimes];
+          newChart[newChart.length - 1].AI = aiTurn;
+        }
         this.setState({
           TurnOf: this.state.Player,
           Map: action.Map,
