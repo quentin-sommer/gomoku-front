@@ -58,10 +58,19 @@ class Game extends React.Component {
         this.addPawnToBoard(coords.x, coords.y, cell.Player);
       }
     });
+    if (this.props.suggestedMove !== -1) {
+      this.suggestedMove.material.alpha = 0.8;
+      this.moveSuggestedMove(toCoord(this.props.suggestedMove));
+    }
     return (
       <canvas id="renderCanvas" />
     )
   }
+
+  moveSuggestedMove = ({x, y}) => {
+    this.suggestedMove.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (x + 0.5);
+    this.suggestedMove.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * (y + 0.5);
+  };
 
   playPawn(x, y) {
     const idx = toIdx(x, y);
@@ -206,9 +215,17 @@ class Game extends React.Component {
      const newText = new Text2D("A", { parent: canvasBoardGame, fontName: "7pt Arial", x: 0, y: 0, fontSuperSample: true });
      newText.defaultFontColor = new Color4(0, 0, 0, 1);*/
 
+    this.suggestedMove = Mesh.CreateSphere('ghost', 32, 3, this.scene);
+    this.suggestedMove.position.x = 0;
+    this.suggestedMove.position.z = 0;
+    this.suggestedMove.position.y = 1.5;
+    this.suggestedMove.material = new StandardMaterial('ghost', this.scene);
+    this.suggestedMove.material.alpha = 0;
+    this.suggestedMove.material.diffuseColor = Color3.Green();
+
     this.ghostPawn = Mesh.CreateSphere('ghost', 32, 2, this.scene);
-    this.ghostPawn.position.x = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
-    this.ghostPawn.position.z = -(this.widthGrid / 2) + (this.widthGrid / this.nbCase) * 0;
+    this.ghostPawn.position.x = -(this.widthGrid / 2);
+    this.ghostPawn.position.z = -(this.widthGrid / 2);
     this.ghostPawn.position.y = 1.5;
     this.ghostPawn.material = new StandardMaterial('ghost', this.scene);
     this.ghostPawn.material.alpha = 0.6;

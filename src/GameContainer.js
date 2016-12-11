@@ -7,7 +7,8 @@ import Connection, {
   PLAY_TURN,
   ENTER_ROOM,
   REFRESH,
-  SET_AI_LEVEL
+  SET_AI_LEVEL,
+  SUGGESTED_MOVE
 } from './lib/Connection'
 
 class GameContainer extends React.Component {
@@ -38,7 +39,8 @@ class GameContainer extends React.Component {
       GameEnded: false,
       Winner: -1,
       Ws: 'disconnected',
-      iaStrength: 2
+      iaStrength: 2,
+      suggestedMove: -1,
     };
   }
 
@@ -119,6 +121,12 @@ class GameContainer extends React.Component {
         TurnsPlayed: action.TurnsPlayed,
         CapturedPawns: action.CapturedPawns
       });
+    };
+    messageHandlers[SUGGESTED_MOVE] = (action) => {
+      console.log('message: ', action.Type);
+      this.setState({
+        suggestedMove: action.SuggestedMove,
+      })
     };
 
     return messageHandlers

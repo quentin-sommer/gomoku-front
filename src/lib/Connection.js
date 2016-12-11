@@ -13,6 +13,8 @@ export const REFRESH = 'REFRESH';
 
 export const SET_AI_LEVEL = 'SET_AI_LEVEL';
 
+export const SUGGESTED_MOVE = 'SUGGESTED_MOVE';
+
 class Connection {
   constructor(messageHandlers, onOpenCb, onCloseCb) {
     this.url = "ws://localhost:8080/ws";
