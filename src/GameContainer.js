@@ -39,7 +39,7 @@ class GameContainer extends React.Component {
       GameEnded: false,
       Winner: -1,
       Ws: 'disconnected',
-      iaStrength: 2,
+      iaStrength: 3,
       suggestedMove: -1,
     };
   }
