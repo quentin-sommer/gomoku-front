@@ -1,4 +1,5 @@
 import React from 'react'
+import {LineChart, Line, YAxis, XAxis, CartesianGrid, Tooltip, Legend} from 'recharts'
 import Game from './Game'
 import Connection, {
   IDLE,
@@ -41,14 +42,30 @@ class GameContainer extends React.Component {
       Ws: 'disconnected',
       iaStrength: 3,
       suggestedMove: -1,
+      PlayTimes: [{
+        AI: 0,
+        Player: 0,
+        turnNumber: 0,
+      }],
+      TimeCounter: -1,
     };
   }
+
+  getAiTurnStats = () => {
+    return this.getPlayerTurnStats();
+  };
+
+  getPlayerTurnStats = () => {
+    const now = Date.now();
+    return now - this.state.TimeCounter;
+  };
 
   /**
    * Callback when player plays a pawn
    * @param cellIndex unsigned int
    */
   handleTurn = (cellIndex) => {
+    const timeTaken = this.getPlayerTurnStats();
     const newMap = this.state.Map.slice(0);
     const turnsPlayed = this.state.TurnsPlayed.slice(0);
 
@@ -58,11 +75,16 @@ class GameContainer extends React.Component {
       Playable: false
     };
     turnsPlayed[this.state.Player] = turnsPlayed[this.state.Player] + 1;
-
+    const newChart = this.state.PlayTimes.concat([{
+      Player: timeTaken,
+      turnNumber: this.state.TurnsPlayed[1]
+    }]);
     this.setState({
       Map: newMap,
       TurnOf: (this.state.Player === 0) ? 1 : 0,
-      TurnsPlayed: turnsPlayed
+      TurnsPlayed: turnsPlayed,
+      PlayTimes: newChart,
+      TimeCounter: Date.now()
     });
     this.connection.getWs().send(JSON.stringify({
       Type: PLAY_TURN,
@@ -107,12 +129,27 @@ class GameContainer extends React.Component {
     };
     messageHandlers[PLAY_TURN] = (action) => {
       console.log('message: ', action.Type);
-      this.setState({
-        TurnOf: this.state.Player,
-        Map: action.Map,
-        TurnsPlayed: action.TurnsPlayed,
-        CapturedPawns: action.CapturedPawns
-      });
+      if (this.state.TimeCounter !== -1) {
+        const aiTurn = this.getAiTurnStats();
+        const newChart = [...this.state.PlayTimes];
+        newChart[newChart.length - 1].AI = aiTurn;
+        this.setState({
+          TurnOf: this.state.Player,
+          Map: action.Map,
+          TurnsPlayed: action.TurnsPlayed,
+          CapturedPawns: action.CapturedPawns,
+          TimeCounter: Date.now(),
+          PlayTimes: newChart,
+        });
+      } else {
+        this.setState({
+          TurnOf: this.state.Player,
+          Map: action.Map,
+          TurnsPlayed: action.TurnsPlayed,
+          CapturedPawns: action.CapturedPawns,
+          TimeCounter: Date.now(),
+        });
+      }
     };
     messageHandlers[REFRESH] = (action) => {
       console.log('message: ', action.Type);
@@ -136,7 +173,19 @@ class GameContainer extends React.Component {
     return (
       <div className="game-container" >
         <div className="game-info" >
-          <h1 className="game-title" >Gomoku</h1>
+          <div style={{display: 'flex', padding: '1rem'}} >
+            <h1 style={{flex: 1}} className="game-title" >Gomoku</h1>
+            <LineChart width={900} height={200} data={this.state.PlayTimes} >
+              <YAxis yAxisId="left" orientation="left" stroke="#F44336" />
+              <YAxis yAxisId="right" orientation="right" stroke="#8BC34A" />
+              <XAxis dataKey="turnNumber" />
+              <CartesianGrid strokeDasharray="3 3" />
+              <Tooltip/>
+              <Legend verticalAlign="top" height={20} />
+              <Line dot={false} yAxisId="left" type="monotone" dataKey="AI" stroke="#F44336" strokeWidth={2} />
+              <Line dot={false} yAxisId="right" type="monotone" dataKey="Player" stroke="#8BC34A" strokeWidth={2} />
+            </LineChart>
+          </div>
           <div className="game-indicator" >Websocket status:
             {this.state.Ws === 'connected'
               ? <span> Connected</span>
