@@ -48,6 +48,7 @@ class GameContainer extends React.Component {
         turnNumber: 0,
       }],
       TimeCounter: -1,
+      Means: {AI: 0, Player: 0}
     };
   }
 
@@ -147,6 +148,19 @@ class GameContainer extends React.Component {
           TimeCounter: Date.now(),
           PlayTimes: newChart,
         });
+        const len = this.state.PlayTimes.length - 1;
+        const means = this.state.PlayTimes.slice(1).reduce((acc, cur) => {
+          return {
+            AI: acc.AI += cur.AI,
+            Player: acc.Player += cur.Player
+          }
+        }, {AI: 0, Player: 0});
+        this.setState({
+          Means: {
+            AI: Math.round(means.AI / len),
+            Player: Math.round(means.Player / len),
+          }
+        });
       } else {
         this.setState({
           TurnOf: this.state.Player,
@@ -179,8 +193,14 @@ class GameContainer extends React.Component {
     return (
       <div className="game-container" >
         <div className="game-info" >
-          <div style={{display: 'flex', padding: '1rem'}} >
-            <h1 style={{flex: 1}} className="game-title" >Gomoku</h1>
+          <div style={{display: 'flex', padding: '1rem', paddingBottom: '0', justifyContent: 'space-between'}} >
+            <div style={{flex: 1}} >
+              <h1 className="game-title" >Gomoku</h1>
+              <div style={{textAlign: 'left'}} >
+                <div>AI mean play time : {this.state.Means.AI}ms</div>
+                <div>Player mean play time : {this.state.Means.Player}ms</div>
+              </div>
+            </div>
             <LineChart width={900} height={200} data={this.state.PlayTimes} >
               <YAxis yAxisId="left" orientation="left" stroke="#F44336" />
               <YAxis yAxisId="right" orientation="right" stroke="#8BC34A" />
