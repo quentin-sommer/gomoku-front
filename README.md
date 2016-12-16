@@ -1,6 +1,6 @@
 # Gomoku-front
 
-This is the frontend of a Go game we implemented.
+This is the frontend of a multi-player Go game we implemented.
 The backend is visible [here](https://github.com/quentin-sommer/gomoku-back)
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
