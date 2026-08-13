@@ -3,7 +3,7 @@
 ![Image of Gomoku](https://github.com/quentin-sommer/gomoku-back/blob/master/images/gomoku.jpg)
 
 This is the frontend of a multi-player Go game we implemented in school.
-The backend is visible [here](https://github.com/quentin-sommer/gomoku-back)
+The backend is visible [here](https://github.com/quentin-sommer/gomoku-server)
 
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 You can find the most recent version of the guide [here](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md).
